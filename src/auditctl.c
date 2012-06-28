@@ -29,6 +29,7 @@
 #include <getopt.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <sys/utsname.h>

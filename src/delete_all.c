@@ -24,6 +24,7 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/select.h>
+#include <sys/time.h>
 
 #include "libaudit.h"
 #include "private.h"
