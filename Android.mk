@@ -2,7 +2,7 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
-MY_ROOT_PATH := external/audit
+MY_ROOT_PATH := external/android_audit
 
 LOCAL_MODULE := auditctl
 LOCAL_MODULE_TAGS := eng
@@ -17,9 +17,9 @@ LOCAL_SRC_FILES:= lib/libaudit.c \
 			src/delete_all.c
 
 
-LOCAL_C_INCLUDES := bionic/libc/include \
-			$(MY_ROOT_PATH) \
+LOCAL_C_INCLUDES :=	$(MY_ROOT_PATH) \
 			$(MY_ROOT_PATH)/lib \
+			$(MY_ROOT_PATH)/src \
 			kernel/x86/include
 
 LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing 
