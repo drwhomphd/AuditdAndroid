@@ -36,6 +36,8 @@
 #include "libaudit.h"
 #include "private.h"
 
+#include "stpcpy.h"
+
 #define TTY_PATH	32
 #define MAX_USER	(UT_NAMESIZE * 2) + 8
 
