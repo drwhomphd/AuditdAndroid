@@ -19,6 +19,7 @@ LOCAL_SRC_FILES:= lib/libaudit.c \
 
 LOCAL_C_INCLUDES :=	$(MY_ROOT_PATH) \
 			$(MY_ROOT_PATH)/lib \
+			$(MY_ROOT_PATH)/libc \
 			$(MY_ROOT_PATH)/kernel \
 			$(MY_ROOT_PATH)/src
 
