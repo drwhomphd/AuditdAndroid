@@ -73,12 +73,12 @@ int start_config_manager(struct auditd_reply_list *rep)
 	}
 	return rc;
 }
-
+/*
 void shutdown_config(void)
 {
         pthread_cancel(config_thread);
 }
-
+*/
 static void *config_thread_main(void *arg)
 {
 	sigset_t sigs;
