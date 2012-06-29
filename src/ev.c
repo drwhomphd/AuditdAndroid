@@ -144,14 +144,8 @@
 #  define EV_USE_INOTIFY 0
 # endif
 
-# if HAVE_SIGNALFD && HAVE_SYS_SIGNALFD_H
-#  ifndef EV_USE_SIGNALFD
-#   define EV_USE_SIGNALFD EV_FEATURE_OS
-#  endif
-# else
 #  undef EV_USE_SIGNALFD
 #  define EV_USE_SIGNALFD 0
-# endif
 
 # if HAVE_EVENTFD
 #  ifndef EV_USE_EVENTFD
