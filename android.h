@@ -10,3 +10,5 @@
 
 #define _POSIX_HOST_NAME_MAX 255
 #define O_DSYNC O_SYNC
+
+typedef long fd_mask;
