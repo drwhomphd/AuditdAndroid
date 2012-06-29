@@ -39,6 +39,7 @@
 #include "auditd-listen.h"
 #include "libaudit.h"
 #include "private.h"
+#include "android.h"
 
 /* This is defined in auditd.c */
 extern volatile int stop;

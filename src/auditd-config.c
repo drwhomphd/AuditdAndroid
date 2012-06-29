@@ -38,6 +38,7 @@
 #include "auditd-config.h"
 #include "libaudit.h"
 #include "private.h"
+#include "android.h"
 
 #define TCP_PORT_MAX 65535
 
