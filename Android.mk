@@ -19,8 +19,7 @@ LOCAL_SRC_FILES:= lib/libaudit.c \
 
 LOCAL_C_INCLUDES :=	$(MY_ROOT_PATH) \
 			$(MY_ROOT_PATH)/lib \
-			$(MY_ROOT_PATH)/src \
-			kernel/x86/include
+			$(MY_ROOT_PATH)/src
 
 LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing 
 
