@@ -133,13 +133,16 @@ static const struct kw_pair keywords[] =
   {"log_group",                log_group_parser,		0 },
   {"flush",                    flush_parser,			0 },
   {"freq",                     freq_parser,			0 },
+  /* 
   {"num_logs",                 num_logs_parser,			0 },
   {"dispatcher",               dispatch_parser,			0 },
+  */
   {"name_format",              name_format_parser,		0 },
   {"name",                     name_parser,			0 },
   {"disp_qos",                 qos_parser,			0 },
   {"max_log_file",             max_log_size_parser,		0 },
   {"max_log_file_action",      max_log_size_action_parser,	0 },
+  /*
   {"space_left",               space_left_parser,		0 },
   {"space_left_action",        space_action_parser,		1 },
   {"action_mail_acct",         action_mail_acct_parser,		0 },
@@ -147,6 +150,7 @@ static const struct kw_pair keywords[] =
   {"admin_space_left_action",  admin_space_left_action_parser,	1 },
   {"disk_full_action",         disk_full_action_parser,		1 },
   {"disk_error_action",        disk_error_action_parser,	1 },
+  */
   {"priority_boost",           priority_boost_parser,		0 },
   {"tcp_listen_port",          tcp_listen_port_parser,          0 },
   {"tcp_listen_queue",         tcp_listen_queue_parser,         0 },
