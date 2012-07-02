@@ -25,11 +25,18 @@
 #include <stdarg.h>
 #include "libaudit.h"
 #include "private.h"
+#include <android/log.h> // Android logging
 
 /* The message mode refers to where informational messages go
    0 - stderr, 1 - syslog, 2 - quiet. The default is quiet. */
 static message_t message_mode = MSG_QUIET;
 static debug_message_t debug_message = DBG_NO;
+
+
+// Log priority for Android specific logging functionality
+static android_LogPriority log_priority = ANDROID_LOG_WARN;
+
+//extern int __android_log_vprint(int prio, const char *tag, const char *fmt, va_list ap);
 
 void set_aumessage_mode(message_t mode, debug_message_t debug)
 {
@@ -41,11 +48,14 @@ void audit_msg(int priority, const char *fmt, ...)
 {
         va_list   ap;
 
-	if (message_mode == MSG_QUIET)
-		return;
+	//if (message_mode == MSG_QUIET)
+	//	return;
 
-	if (priority == LOG_DEBUG && debug_message == DBG_NO)
-		return;
+        if (log_priority == ANDROID_LOG_SILENT)
+          return;
+
+//	if (priority == LOG_DEBUG && debug_message == DBG_NO)
+//		return;
 
         va_start(ap, fmt);
         if (message_mode == MSG_SYSLOG)
@@ -54,6 +64,10 @@ void audit_msg(int priority, const char *fmt, ...)
                 vfprintf(stderr, fmt, ap);
 		fputc('\n', stderr);
 	}
+
+        if (log_priority != ANDROID_LOG_SILENT) {
+          __android_log_vprint(log_priority, "auditd", fmt, ap);
+        }
         va_end( ap );
 }
 hidden_def(audit_msg)
