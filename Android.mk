@@ -1,8 +1,10 @@
+# Build the auditctl binary
 LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
 MY_ROOT_PATH := external/android_audit
+ETC_DIR := $(TARGET_OUT)/etc/auditd
 
 LOCAL_MODULE := auditctl
 LOCAL_MODULE_TAGS := eng
@@ -29,6 +31,8 @@ LOCAL_SHARED_LIBRARIES := libc libcutils
 
 include $(BUILD_EXECUTABLE)
 
+
+# Build the auditd binary
 include $(CLEAR_VARS)
 
 MY_ROOT_PATH := external/android_audit
@@ -62,5 +66,13 @@ LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing
 
 LOCAL_SHARED_LIBRARIES := libc libcutils
 
-
 include $(BUILD_EXECUTABLE)
+
+# Start copying configuration files
+include $(CLEAR_VARS)
+LOCAL_MODULE := auditd.conf
+LOCAL_MODULE_TAGS := eng
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(ETC_DIR)
+LOCAL_SRC_FILES := etc/auditd.conf
+include $(BUILD_PREBUILT)
