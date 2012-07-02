@@ -3,3 +3,7 @@ There are two nonstandard, special, directories in this repository.
 The 'kernel' directory includes kernel headers that are not present in Google's cleaned headers. While I have attempted to clean a new set of headers, I've found the scripts about as usable as writing the next great American novel in 'ed'. 
 
 The 'libc' directory includes headers and source files that define functions not included in Google's non-POSIX compliant libc implementation. 
+
+Non speical directories:
+
+The 'src' directory contains binary source for individual applications. The 'lib' directory contains source code shared between each application that was originally part of libaudit or libev. The 'etc' directory contains configuration specific files.
