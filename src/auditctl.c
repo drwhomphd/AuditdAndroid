@@ -40,6 +40,8 @@
 #include "libaudit.h"
 #include "private.h"
 
+#include "android.h"
+
 /* This define controls how many rule options we will allow when
  * reading a rule from a file. 64 fields are allowed by the kernel, so I
  * want to allow that plus a few entries for lists and other such items */
