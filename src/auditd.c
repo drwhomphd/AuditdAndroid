@@ -62,7 +62,7 @@ volatile int stop = 0;
 /* Local data */
 static int fd = -1;
 static struct daemon_conf config;
-static const char *pidfile = "/var/run/auditd.pid";
+static const char *pidfile = "/system/etc/auditd/auditd.pid";
 static int init_pipe[2];
 static int do_fork = 1;
 static struct auditd_reply_list *rep = NULL;
