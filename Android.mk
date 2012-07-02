@@ -4,7 +4,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 MY_ROOT_PATH := external/android_audit
-ETC_DIR := $(TARGET_OUT)/etc/auditd
+ETC_DIR := $(TARGET_OUT)/etc/audit
 
 LOCAL_MODULE := auditctl
 LOCAL_MODULE_TAGS := eng
