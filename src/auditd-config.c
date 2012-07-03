@@ -1521,12 +1521,13 @@ static int krb5_key_file_parser(struct nv_pair *nv, int line,
 static int sanity_check(struct daemon_conf *config)
 {
 	/* Error checking */
+        /* 
 	if (config->space_left <= config->admin_space_left) {
 		audit_msg(LOG_ERR, 
 	    "Error - space_left(%lu) must be larger than admin_space_left(%lu)",
 		    config->space_left, config->admin_space_left);
 		return 1;
-	}
+	} */
 	if (config->flush == FT_INCREMENTAL && config->freq == 0) {
 		audit_msg(LOG_ERR, 
 		"Error - incremental flushing chosen, but 0 selected for freq");
