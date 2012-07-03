@@ -245,7 +245,7 @@ static void clear_config(struct daemon_conf *config)
 	config->sender_uid = 0;
 	config->sender_pid = 0;
 	config->sender_ctx = NULL;
-	config->log_file = strdup("/var/log/audit/audit.log");
+	config->log_file = strdup("/dev/audit");
 	config->log_format = LF_RAW;
 	config->log_group = 0;
 	config->priority_boost = 4;
