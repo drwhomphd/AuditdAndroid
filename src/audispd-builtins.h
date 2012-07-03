@@ -26,7 +26,7 @@
 
 #include "queue.h"
 
-void start_builtin(plugin_conf_t *conf);
+//void start_builtin(plugin_conf_t *conf);
 void send_af_unix_string(const char *s, unsigned int len);
 void send_af_unix_binary(event_t *e);
 void destroy_af_unix(void);

@@ -44,7 +44,7 @@ static char *path = NULL;
 static void init_af_unix(const plugin_conf_t *conf);
 static void init_syslog(const plugin_conf_t *conf);
 
-
+/*
 void start_builtin(plugin_conf_t *conf)
 {
 	if (strcasecmp("builtin_af_unix", conf->path) == 0) {
@@ -56,7 +56,7 @@ void start_builtin(plugin_conf_t *conf)
 	} else
 		syslog(LOG_ERR, "Unknown builtin %s", conf->path);
 }
-
+*/
 static void af_unix_accept(int fd)
 {
 	int cmd;
