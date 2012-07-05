@@ -899,8 +899,8 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 
 	if (bind(listen_socket, (struct sockaddr *)&address, sizeof(address))){
         	audit_msg(LOG_ERR,
-			"Cannot bind af_unix listener socket to location %s",
-			config->log_file);
+			"Cannot bind af_unix listener socket to location(%s)",
+			strerror(errno));
 		close(listen_socket);
 		return 1;
 	}
