@@ -82,7 +82,7 @@ static void change_runlevel(const char *level)
 	syslog(LOG_ALERT, "Audispd failed to exec %s", init_pgm);
 	exit(1);
 }
-
+/*
 static void do_overflow_action(struct daemon_conf *config)
 {
         switch (config->overflow_action)
@@ -112,7 +112,8 @@ static void do_overflow_action(struct daemon_conf *config)
                         break;
         }
 }
-
+*/
+/*
 void enqueue(event_t *e, struct daemon_conf *config)
 {
 	unsigned int n, retry_cnt = 0;
@@ -143,11 +144,13 @@ retry:
 		struct timespec ts;
 		ts.tv_sec = 0;
 		ts.tv_nsec = 2 * 1000 * 1000; // 2 milliseconds
-		nanosleep(&ts, NULL); /* Let other thread try to log it. */
+		nanosleep(&ts, NULL); // Let other thread try to log it.
 		retry_cnt++;
 		goto retry;
 	}
 }
+
+*/
 
 event_t *dequeue(void)
 {
