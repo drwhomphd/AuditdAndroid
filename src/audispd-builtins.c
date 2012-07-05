@@ -29,10 +29,12 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "audispd-pconfig.h"
+#include <sys/uio.h>
+//#include "audispd-pconfig.h"
 #include "audispd-builtins.h"
 
 // Local data
@@ -41,8 +43,8 @@ static int syslog_started = 0, priority;
 static char *path = NULL;
 
 // Local prototypes
-static void init_af_unix(const plugin_conf_t *conf);
-static void init_syslog(const plugin_conf_t *conf);
+//static void init_af_unix(const plugin_conf_t *conf);
+//static void init_syslog(const plugin_conf_t *conf);
 
 /*
 void start_builtin(plugin_conf_t *conf)
@@ -107,7 +109,7 @@ static int create_af_unix_socket(const char *path, int mode)
 
 	// Put socket in nonblock mode
 	cmd = fcntl(sock, F_GETFL);
-	fcntl(sock, F_SETFL, cmd|FNDELAY);
+	fcntl(sock, F_SETFL, cmd|O_NONBLOCK);
 
 	// don't leak the descriptor
 	cmd = fcntl(sock, F_GETFD);
@@ -121,6 +123,7 @@ static int create_af_unix_socket(const char *path, int mode)
 	return 0;
 }
 
+/*
 static void init_af_unix(const plugin_conf_t *conf)
 {
 	int i = 1, mode = -1;
@@ -193,7 +196,7 @@ static void init_af_unix(const plugin_conf_t *conf)
 	}
 	syslog(LOG_INFO, "af_unix plugin initialized");
 }
-
+*/
 void send_af_unix_string(const char *s, unsigned int len)
 {
 	if (sock < 0) 
@@ -252,7 +255,7 @@ void destroy_af_unix(void)
 		path = NULL;
 	}
 }
-
+/*
 static void init_syslog(const plugin_conf_t *conf)
 {
 	int i, facility = LOG_USER;
@@ -306,6 +309,7 @@ static void init_syslog(const plugin_conf_t *conf)
 		openlog("audispd", 0, facility);
 	syslog_started = 1;
 }
+*/
 
 void send_syslog(const char *s)
 {
