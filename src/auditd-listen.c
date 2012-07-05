@@ -37,6 +37,7 @@
 #include <limits.h>	/* INT_MAX */
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/un.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #ifdef HAVE_LIBWRAP
@@ -875,17 +876,12 @@ void auditd_set_ports(int minp, int maxp, int max_p_addr)
 
 int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 {
-	struct sockaddr_in address;
+	struct sockaddr_un address;
 	int one = 1;
 
-	/* If the port is not set, that means we aren't going to
-	  listen for connections.  */
-	if (config->tcp_listen_port == 0)
-		return 0;
-
-	listen_socket = socket (AF_INET, SOCK_STREAM, 0);
+	listen_socket = socket (PF_UNIX, SOCK_STREAM, 0);
 	if (listen_socket < 0) {
-        	audit_msg(LOG_ERR, "Cannot create tcp listener socket");
+        	audit_msg(LOG_ERR, "Cannot create PF_UNIX listener socket");
 		return 1;
 	}
 
@@ -894,9 +890,8 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 			(char *)&one, sizeof (int));
 
 	memset (&address, 0, sizeof(address));
-	address.sin_family = AF_INET;
-	address.sin_port = htons(config->tcp_listen_port);
-	address.sin_addr.s_addr = htonl(INADDR_ANY);
+	address.sun_family = AF_UNIX;
+        strcpy(&address.sun_path[0], config->log_file);
 
 	/* This avoids problems if auditd needs to be restarted.  */
 	setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR,
@@ -909,20 +904,25 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 		close(listen_socket);
 		return 1;
 	}
+	
+        // Put socket in nonblock mode
+	int cmd = fcntl(listen_socket, F_GETFL);
+	fcntl(listen_socket, F_SETFL, cmd|O_NONBLOCK);
+
+	// don't leak the descriptor
+	cmd = fcntl(listen_socket, F_GETFD);
+	fcntl(listen_socket, F_SETFD, cmd|FD_CLOEXEC);
 
 	listen(listen_socket, config->tcp_listen_queue);
 
-	audit_msg(LOG_DEBUG, "Listening on TCP port %ld",
-		config->tcp_listen_port);
+	audit_msg(LOG_DEBUG, "Listening on UNIX SOCKET %s",
+		config->log_file);
 
 	ev_io_init (&tcp_listen_watcher, auditd_tcp_listen_handler,
 			listen_socket, EV_READ);
 	ev_io_start (loop, &tcp_listen_watcher);
 
 	use_libwrap = config->use_libwrap;
-	auditd_set_ports(config->tcp_client_min_port,
-			config->tcp_client_max_port,
-			config->tcp_max_per_addr);
 
 #ifdef USE_GSSAPI
 	if (config->enable_krb5) {
