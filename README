@@ -7,3 +7,8 @@ The 'libc' directory includes headers and source files that define functions not
 Non speical directories:
 
 The 'src' directory contains binary source for individual applications. The 'lib' directory contains source code shared between each application that was originally part of libaudit or libev. The 'etc' directory contains configuration specific files.
+
+Configuration notes:
+Our port uses the log_file specified in the configuration as a socket for communicating with clients. This log_file will be unlinked whenever auditd starts up so that the socket can be bound.
+
+Disclaimer: The source code requires some serious refactoring after the modifications of the original audit code. Code cleanup of commented out and orphaned code is also needed.
