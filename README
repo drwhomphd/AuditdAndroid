@@ -12,3 +12,13 @@ Configuration notes:
 Our port uses the log_file specified in the configuration as a socket for communicating with clients. This log_file will be unlinked whenever auditd starts up so that the socket can be bound.
 
 Disclaimer: The source code requires some serious refactoring after the modifications of the original audit code. Code cleanup of commented out and orphaned code is also needed.
+
+REFACTORING TO DO:
+  - Remove syslog dependency and switch to Android's logcat infrastructure.
+  - Figure out how to get the old logging code up and running with the new
+    AF_UNIX socket code in case people want to write audit logs to the 
+    sdcard for whatever reason.
+
+CLEANUP TO DO:
+  - Remove GSSAPI related networking
+  - Remove TCP related networking -- TCPWrappers etc.
