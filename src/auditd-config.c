@@ -525,15 +525,16 @@ static int log_file_parser(struct nv_pair *nv, int line,
 	fd = open(nv->value, mode);
 	if (fd < 0) {
 		if (errno == ENOENT) {
-			fd = create_log_file(nv->value);
-			if (fd < 0) 
-				return 1;
+                        audit_msg(LOG_ERR, "Log file does not yet exist.");
+			//fd = create_log_file(nv->value);
+			//if (fd < 0) 
+			//	return 1;
 		} else {
 			audit_msg(LOG_ERR, "Unable to open %s (%s)", nv->value, 
 					strerror(errno));
 			return 1;
 		}
-	}
+	}/*
 	if (fstat(fd, &buf) < 0) {
 		audit_msg(LOG_ERR, "Unable to stat %s (%s)", 
 					nv->value, strerror(errno));
@@ -558,7 +559,7 @@ static int log_file_parser(struct nv_pair *nv, int line,
 		audit_msg(LOG_ERR, "audit log is not writable by owner");
 		return 1;
 	}
-
+*/
 	free((void *)config->log_file);
 	config->log_file = strdup(nv->value);
 	if (config->log_file == NULL)
