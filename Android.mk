@@ -52,8 +52,6 @@ LOCAL_SRC_FILES:= lib/libaudit.c \
 			src/auditd-sendmail.c \
 			src/auditd-dispatch.c \
 			src/auditd-listen.c \
-			src/queue.c \
-			src/audispd-builtins.c \
 			src/ev.c \
 			src/event.c
 
