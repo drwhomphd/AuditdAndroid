@@ -171,6 +171,10 @@ static void distribute_event(struct auditd_reply_list *rep)
 	/* Make first attempt to send to plugins */
 	if (dispatch_event(&rep->reply, attempt) == 1)
 		attempt++; /* Failed sending, retry after writing to disk */
+        
+        /* This sends our event to the local AF_UNIX socket 
+         * handled in auditd-listen. */
+        dispatch_event_to_socket(&rep->reply);
 
 	/* End of Event is for realtime interface - skip local logging of it */
 	if (rep->reply.type != AUDIT_EOE) {

@@ -1022,3 +1022,13 @@ void auditd_tcp_listen_check_idle (struct ev_loop *loop )
 		free(ev);
 	}
 }
+
+int dispatch_event_to_socket(const struct audit_reply *rep) {
+  struct ev_tcp *ev, *next = NULL;
+  int active;
+
+  for (ev = client_chain; ev; ev = next) {
+    ar_write(ev->io.fd,"TEST\0", 5);
+  }
+  return 1;
+}
