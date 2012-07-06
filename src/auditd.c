@@ -717,10 +717,10 @@ int main(int argc, char *argv[])
 	ev_signal_init (&sigchld_watcher, child_handler, SIGCHLD);
 	ev_signal_start (loop, &sigchld_watcher);
 
-	ev_periodic_init (&periodic_watcher, periodic_handler,
-			  0, config.tcp_client_max_idle, NULL);
-	if (config.tcp_client_max_idle)
-		ev_periodic_start (loop, &periodic_watcher);
+//	ev_periodic_init (&periodic_watcher, periodic_handler,
+//			  0, config.tcp_client_max_idle, NULL);
+//	if (config.tcp_client_max_idle)
+//		ev_periodic_start (loop, &periodic_watcher);
 
 	if (auditd_tcp_listen_init (loop, &config)) {
 		char emsg[DEFAULT_BUF_SZ];
