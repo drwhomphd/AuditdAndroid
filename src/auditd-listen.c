@@ -1028,7 +1028,7 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
   int active;
 
   for (ev = client_chain; ev; ev = next) {
-    ar_write(ev->io.fd,"TEST\0", 5);
+    ar_write(ev->io.fd,rep->message, rep->len);
   }
   return 1;
 }
