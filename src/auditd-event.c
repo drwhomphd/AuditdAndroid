@@ -39,7 +39,6 @@
 #include "auditd-dispatch.h"
 #include "auditd-listen.h"
 #include "libaudit.h"
-#include "audispd-builtins.h"
 
 #include "private.h"
 #include "android.h"

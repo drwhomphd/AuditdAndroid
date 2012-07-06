@@ -44,7 +44,6 @@
 #include "auditd-config.h"
 #include "auditd-dispatch.h"
 #include "auditd-listen.h"
-#include "audispd-builtins.h"
 #include "private.h"
 
 #include "ev.h"
