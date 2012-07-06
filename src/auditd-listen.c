@@ -897,6 +897,19 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 	setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR,
 			(char *)&one, sizeof (int));
 
+        // Unlink the path to the socket. We can assume this is
+        // safe becase the path is located in /dev unless
+        // the user changes it in the configuration file.
+        // The fact the file specified in the configuration
+        // is going to be unlinked will be included in the
+        // README.
+        if(unlink(config->log_file)) {
+          audit_msg(LOG_ERR, "Could not unlink socket location (%s)",
+              strerror(errno));
+
+          return 1;
+        }
+
 	if (bind(listen_socket, (struct sockaddr *)&address, sizeof(address))){
         	audit_msg(LOG_ERR,
 			"Cannot bind af_unix listener socket to location(%s)",
