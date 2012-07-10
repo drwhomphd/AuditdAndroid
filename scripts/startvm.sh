@@ -1,0 +1,1 @@
+emulator-x86 -verbose -memory 1024 -partition-size 256 -sysdir ./ -datadir ./ -show-kernel -sdcard ./sdcard.img -system ./system.img -kernel ./qemu-audit-x86-kernel -ramdisk ./ramdisk.img -data ./userdata.img -qemu -append audit=1
