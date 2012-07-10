@@ -20,7 +20,6 @@
  *  Nathaniel Husted <nhusted@gmail.com>
  */
 
-/**
 #include "stpcpy.h"
 #include <stdlib.h>
 #include <stdio.h>
