@@ -68,6 +68,17 @@ LOCAL_SHARED_LIBRARIES := libc libcutils
 
 include $(BUILD_EXECUTABLE)
 
+#spade-audit utility build
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := spade-audit
+LOCAL_MODULE_TAGS := eng
+LOCAL_SRC_FILES:= $(MY_ROOT_PATH)/spadeLinuxAudit.c
+LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing 
+LOCAL_LDLIBS := -lm -lpthread 
+
+include $(BUILD_EXECUTABLE)
+
 # Start copying configuration files
 include $(CLEAR_VARS)
 LOCAL_MODULE := auditd.conf
@@ -76,3 +87,5 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH := $(ETC_DIR)
 LOCAL_SRC_FILES := etc/auditd.conf
 include $(BUILD_PREBUILT)
+
+
