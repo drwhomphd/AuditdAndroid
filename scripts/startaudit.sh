@@ -6,10 +6,17 @@
 # Start auditd
 adb shell auditd
 
+# Start the spade-audit dump running in the background
+adb shell spade-audit > ./dumpforspade.log &
+
 # Start getting our rules added.
 
 # Delete all current rules
 adb shell auditctl -D
+
+# find our spade-audit process and ignore it
+spadeauditpid=$(adb shell ps | grep spade-audit | awk "{print \$2 }")
+adb shell auditctl -a exit,never -S all -F pid=$spadeauditpid
 
 # We need to find the auditd process and ignore it
 auditdpids=$(adb shell ps | grep auditd | awk "{print \$2 }")
