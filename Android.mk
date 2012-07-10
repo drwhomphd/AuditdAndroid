@@ -73,7 +73,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := spade-audit
 LOCAL_MODULE_TAGS := eng
-LOCAL_SRC_FILES:= $(MY_ROOT_PATH)/spadeLinuxAudit.c
+LOCAL_SRC_FILES:= src/spadeLinuxAudit.c
 LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing 
 LOCAL_LDLIBS := -lm -lpthread 
 
