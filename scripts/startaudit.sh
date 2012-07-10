@@ -2,6 +2,10 @@
 
 # Requires the latest version of the Android SDK
 # @TODO: Automated check that this stuff is in the path...
+# @TODO: Still allows a number of adb calls that come through. These seem
+#         to spawn and exit and then respawn. They spawn from init so
+#         they don't get forked from the original auditd process that's
+#         being ignored.
 
 # Start auditd
 adb shell auditd
