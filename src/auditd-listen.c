@@ -1029,10 +1029,7 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
 
   // For each client that's connected, send them the message.
   for (ev = client_chain; ev; ev = next) {
-    if(ar_write(ev->io.fd,rep->message, rep->len) < rep->len) {
-      audit_msg(LOG_ERR, "Error sending message to AF_UNIX client.");
-      return 1;
-    }
+    ar_write(ev->io.fd,rep->message, rep->len)
 
     // This is for the sake of parsing the socket output.
     ar_write(ev->io.fd, "\n\n", 2);
