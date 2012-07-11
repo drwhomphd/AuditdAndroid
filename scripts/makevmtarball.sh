@@ -16,7 +16,7 @@ KERNELIMG="../prebuilt/qemu-audit-x86-kernel"
 # Android root should be the first command line argument
 ANDROIDROOT=$1
 
-SCRATCHDIR=AuditOnAndroid-X86
+SCRATCHDIR=AndroidAuditX86Emu
 
 # make our scratch directory
 mkdir $SCRATCHDIR
@@ -27,8 +27,9 @@ cp ${ANDROIDROOT}/out/target/product/generic_x86/*.img ${SCRATCHDIR}/
 # copy over our prebuilt kernel
 cp $KERNELIMG $SCRATCHDIR
 
-# copy our start script
+# copy our start scripts
 cp ./startvm.sh ${SCRATCHDIR}/
+cp ./startaudit.sh ${SCRATCHDIR}/
 
 # tar+bzip up the scratchdir
 tar cvvf ${SCRATCHDIR}.tar $SCRATCHDIR
