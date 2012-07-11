@@ -6,6 +6,9 @@
 # Set the root project directory (where the Android.mk will be)
 APP_PROJECT_PATH := ./
 
+# Set our build script because it's not in ./jni
+APP_BUILD_SCRIPT := ./Android-NDK.mk
+
 # Use the debug level of optimizations for now. You can uncomment the 
 # release line and comment the debug line if needed.
 APP_OPTIM := debug
