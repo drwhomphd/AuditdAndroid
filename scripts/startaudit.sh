@@ -6,6 +6,8 @@
 #         to spawn and exit and then respawn. They spawn from init so
 #         they don't get forked from the original auditd process that's
 #         being ignored.
+# @TODO: Condense all the deny rules in to one chain to make things
+#          considerably faster.
 
 # Start auditd
 adb shell auditd
@@ -31,7 +33,13 @@ done
 
 # We need to find the adb process and ignore it
 adbpid=$(adb shell ps | grep adb | awk "{print \$2 }")
-adb shell auditctl -a exit,never -S all -F pid=$adbpid
+adb shell "auditctl -a exit,never -S all -F pid=$adbpid -F ppid=$adbpid"
+
+# This is a ham-fisted way of ignoring the adbd processors that are spawned
+# during execution of adbd related work. They seem to be fork/execed from
+# init at regular intervals and all have pids between 800 and 900 close to
+# the pid from $adbpid
+adb shell "auditctl -a exit,never -S all -F 'pid>800' -F 'pid<900'"
 
 #Double check our rules so far
 adb shell auditctl -l
@@ -39,3 +47,5 @@ adb shell auditctl -l
 # Add our other rules
 adb shell auditctl -a exit,always -S clone -S execve -S exit_group -S open -S write -S mkdir -S mkdirat -S mknod -S chmod -S fchmod -S fchmodat -S chown -S fchown32 -S fchownat -S lchown32 -S close -S fork -S unlink -S link -S setuid -S symlink -S unlinkat -S setuid32 -S setreuid32 -S setresuid32
 
+# Start up logcat so we can monitor any warnings auditd sends
+adb logcat
