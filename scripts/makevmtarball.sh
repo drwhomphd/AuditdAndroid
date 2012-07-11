@@ -11,6 +11,8 @@
 # @TODO: Make sure this script doesn't work with relative paths so it won't
 #        break when run from other directories.
 
+# @TODO: Add the ability for this script to print out its expected command line variables and check that they exist. 
+
 KERNELIMG="../prebuilt/qemu-audit-x86-kernel"
 
 # Android root should be the first command line argument
@@ -33,7 +35,7 @@ cp ./startaudit.sh ${SCRATCHDIR}/
 
 # tar+bzip up the scratchdir
 tar cvvf ${SCRATCHDIR}.tar $SCRATCHDIR
-bzip2 ${SCRATCHDIR}.tar
+bzip2 -f ${SCRATCHDIR}.tar
 
 #Cleanup
 rm -rf $SCRATCHDIR
