@@ -1029,7 +1029,7 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
 
   // For each client that's connected, send them the message.
   for (ev = client_chain; ev; ev = next) {
-    ar_write(ev->io.fd,rep->message, rep->len)
+    ar_write(ev->io.fd,rep->message, rep->len);
 
     // This is for the sake of parsing the socket output.
     ar_write(ev->io.fd, "\n\n", 2);
