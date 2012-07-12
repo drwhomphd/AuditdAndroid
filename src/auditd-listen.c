@@ -57,6 +57,7 @@
 
 extern volatile int stop;
 extern int send_audit_event(int type, const char *str);
+#define AUDITD_SOCKET_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
 #define DEFAULT_BUF_SZ  192
 
 typedef struct ev_tcp {
@@ -925,6 +926,14 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 	// don't leak the descriptor
 	cmd = fcntl(listen_socket, F_GETFD);
 	fcntl(listen_socket, F_SETFD, cmd|FD_CLOEXEC);
+
+        // Make sure the socket is read/write (0660) by
+        // the audit.audit user/grp
+        if (fchmod(listen_socket, AUDITD_SOCKET_MODE)) {
+          audit_msg(LOG_ERR, "Cannot chmod 0660 af_unix listener socket(%s)",
+              strerror(errno));
+          return 1;
+        }
 
 	listen(listen_socket, config->tcp_listen_queue);
 
