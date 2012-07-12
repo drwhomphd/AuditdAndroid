@@ -517,12 +517,14 @@ static int log_file_parser(struct nv_pair *nv, int line,
 
 	/* if the file exists, see that its regular, owned by root, 
 	 * and not world anything */
+        /*
 	if (log_test == TEST_AUDITD)
 		mode = O_APPEND;
 	else
 		mode = O_RDONLY;
-
-	fd = open(nv->value, mode);
+        */
+	//fd = open(nv->value, mode);
+        //
 	if (fd < 0) {
 		if (errno == ENOENT) {
                         audit_msg(LOG_ERR, "Log file does not yet exist.");
