@@ -27,7 +27,8 @@ LOCAL_C_INCLUDES :=	$(MY_ROOT_PATH) \
 
 LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing 
 
-LOCAL_SHARED_LIBRARIES := libc libcutils libandroid
+LOCAL_SHARED_LIBRARIES := libc libcutils
+LOCAL_LDLIBS := -llog
 
 include $(BUILD_EXECUTABLE)
 
@@ -64,7 +65,8 @@ LOCAL_C_INCLUDES :=	$(MY_ROOT_PATH) \
 
 LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing 
 
-LOCAL_SHARED_LIBRARIES := libc libcutils libandroid
+LOCAL_SHARED_LIBRARIES := libc libcutils
+LOCAL_LDLIBS := -llog
 
 include $(BUILD_EXECUTABLE)
 
