@@ -1035,14 +1035,31 @@ void auditd_tcp_listen_check_idle (struct ev_loop *loop )
 int dispatch_event_to_socket(const struct audit_reply *rep) {
   struct ev_tcp *ev, *next = NULL;
   int active;
+  unsigned int len;
+  char *msg;
+    
+  // Use an allcoated sprintf. type and msg are included for now
+  // because SPADE has convoluted parsing code.
+  // @TODO: Change this back to just writing the message.
+  len = asprintf(&msg, "type=%s msg=%.*s", 
+      audit_msg_type_to_name(rep->type),
+      rep->message);
 
   // For each client that's connected, send them the message.
   for (ev = client_chain; ev; ev = next) {
-    ar_write(ev->io.fd,rep->message, rep->len);
+
+    // New code writing the string created... will be removed when
+    // SPADE parsing is rewritten
+    ar_write(ev->io.fd, msg, len);
+
+    // Old code. Saved because it'll be used when SPADE is rewritten
+    // ar_write(ev->io.fd,rep->message, rep->len);
 
     // This is for the sake of parsing the socket output.
     ar_write(ev->io.fd, "\n\n", 2);
   }
+
+  free(msg);
 
   return 0;
 }
