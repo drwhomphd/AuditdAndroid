@@ -1,0 +1,21 @@
+diff --git a/include/private/android_filesystem_config.h b/include/private/android_filesystem_config.h
+index 6521cbe..74aa49d 100644
+--- a/include/private/android_filesystem_config.h
++++ b/include/private/android_filesystem_config.h
+@@ -63,6 +63,8 @@
+ #define AID_NFC           1027  /* nfc subsystem */
+ #define AID_SDCARD_R      1028  /* external storage read access */
+ 
++#define AID_AUDIT         1029  /* access to kernel audit stream */
++
+ #define AID_SHELL         2000  /* adb and debug shell user */
+ #define AID_CACHE         2001  /* cache access */
+ #define AID_DIAG          2002  /* access to diagnostic resources */
+@@ -121,6 +123,7 @@ static const struct android_id_info android_ids[] = {
+     { "net_bt",    AID_NET_BT, },
+     { "sdcard_r",  AID_SDCARD_R, },
+     { "sdcard_rw", AID_SDCARD_RW, },
++    { "audit",    AID_AUDIT, },
+     { "media_rw",  AID_MEDIA_RW, },
+     { "vpn",       AID_VPN, },
+     { "keystore",  AID_KEYSTORE, },
