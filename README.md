@@ -12,7 +12,10 @@ Our goal is to port a minimal set of userland tools from the GNU/Linux userland 
 ## Compiling ##
 
 ### NDK ###
-This is a work in progress.
+From inside this directory run the following command: 
+ndk-build NDK_APPLICATION_MK=./Application.mk NDK_PROJECT_PATH=./
+
+The obj and libs directory will contain the final output.
 
 ### AOSP ###
 Copy this directory in to the <AndroidBuildRoot>/external directory. No need
