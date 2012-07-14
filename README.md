@@ -21,7 +21,7 @@ to do anything else. It will compile in with AOSP.
 ### Custom kernel ###
 You must have a kernel running with CONFIG_AUDIT=y and CONFIG_AUDITSYSCALL=y in the configuration. Instructions on building a kernel for Android can be found at source.android.com and various other sources on the Internet.
 
-## Directory Structur ##
+## Directory Structure ##
 
 ### Special Directories ###
 
@@ -38,6 +38,8 @@ The 'src' directory contains binary source for individual applications. The 'lib
 The 'prebuilt' directory contains precompiled binaries used for this program. As of right now it only contains the pre-compiled 2.6.29 kernel used with QEMU.
 
 The 'scripts' directory contains helper scripts that can be used to aid testing the code, installing code on the system, and building vm tarballs. They're more utility glue than polished products.
+
+The 'patches' directory contains patches that enable certain advanced functionalities in the AOSP build. For example, it would enable the creation of an AUDIT permission that could be used by userland applications.
 
 ## Modifications of the original Audit configuration ##
 
