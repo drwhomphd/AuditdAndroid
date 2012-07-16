@@ -1041,8 +1041,9 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
   // Use an allcoated sprintf. type and msg are included for now
   // because SPADE has convoluted parsing code.
   // @TODO: Change this back to just writing the message.
-  len = asprintf(&msgtoclient, "type=%s %s\n", 
+  len = asprintf(&msgtoclient, "type=%s %.*s\n", 
       audit_msg_type_to_name(rep->type),
+      rep->len,
       rep->message);
 
 
