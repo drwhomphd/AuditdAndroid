@@ -92,12 +92,11 @@ int main(int argc, char *argv[]) {
         while (1) {
             bytesReceived = 0;
             memset(&buffer, 0, BUFFER_LENGTH);
+
             rc = recv(sd, & buffer[bytesReceived], BUFFER_LENGTH - bytesReceived - 1, 0);
-            if (rc < 0) {
+
+            if (rc <= 0) {
                 //perror("recv() failed");
-                break;
-            } else if (rc == 0) {
-                //printf("The server closed the connection\n");
                 break;
             }
 
@@ -105,7 +104,7 @@ int main(int argc, char *argv[]) {
             /* Increment the number of bytes that have been received so far  */
             /*****************************************************************/
             bytesReceived += rc;
-            printf("%s\n", buffer);
+            printf("%s", buffer);
         }
     } while (FALSE);
 
