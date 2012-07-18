@@ -1041,8 +1041,8 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
   // audit_reply messages may contain newlines. Parse them out.
   char *tmpstr = rep->message;
   while(( tmpstr = strchr(tmpstr, 0x0A)) != NULL) {
-    if (ptr !== &rep->message[rep->len-1])
-      *ptr = ' ';
+    if (tmpstr != &rep->message[rep->len-1])
+      *tmpstr = ' ';
     else
       break;
   }
