@@ -46,7 +46,7 @@ The 'patches' directory contains patches that enable certain advanced functional
 
 ## Modifications of the original Audit configuration ##
 
-Our port uses the log_file specified in the configuration as a socket for communicating with clients. This log_file will be unlinked whenever auditd starts up so that the socket can be bound.
+Our port uses the log_file specified in the configuration as a socket for communicating with clients. This log_file will be unlinked whenever auditd starts up so that the socket can be bound. Our version of audit currently does not write out to a log file. This functionality might be added back at a later date.
 
 __Disclaimer__: The source code requires some serious refactoring after the modifications of the original audit code. Code cleanup of commented out and orphaned code is also needed.
 
