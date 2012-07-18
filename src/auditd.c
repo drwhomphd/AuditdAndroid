@@ -167,10 +167,6 @@ static void distribute_event(struct auditd_reply_list *rep)
 {
 	int attempt = 0;
 
-	/* Make first attempt to send to plugins */
-	if (dispatch_event(&rep->reply, attempt) == 1)
-		attempt++; /* Failed sending, retry after writing to disk */
-        
         /* This sends our event to the local AF_UNIX socket 
          * handled in auditd-listen. */
         dispatch_event_to_socket(&rep->reply);
@@ -190,14 +186,6 @@ static void distribute_event(struct auditd_reply_list *rep)
 	} else
 		free(rep);	// This function takes custody of the memory
 
-	// FIXME: This is commented out since it fails to work. The
-	// problem is that the logger thread free's the buffer. Probably
-	// need a way to flag in the buffer if logger thread should free or
-	// move the free to this function.
-
-	/* Last chance to send...maybe the pipe is empty now. */
-//	if (attempt) 
-//		dispatch_event(&rep->reply, attempt);
 }
 
 /*
