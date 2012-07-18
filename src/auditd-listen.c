@@ -1037,6 +1037,15 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
   int active;
   int len;
   char *msgtoclient;
+
+  // audit_reply messages may contain newlines. Parse them out.
+  char *tmpstr = rep->message;
+  while(( tmpstr = strchr(tmpstr, 0x0A)) != NULL) {
+    if (ptr !== &rep->message[rep->len-1])
+      *ptr = ' ';
+    else
+      break;
+  }
     
   // Use an allcoated sprintf. type and msg are included for now
   // because SPADE has convoluted parsing code.
