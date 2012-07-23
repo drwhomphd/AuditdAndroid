@@ -942,7 +942,8 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 
 
         // Get UID for audit
-        struct passwd *userpw = getpwnam("audit");
+        struct passwd *userpw = NULL;
+        userpw = getpwnam("audit");
         uid_t userid = -1;
 
         if (userpw == NULL) {
@@ -954,14 +955,15 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
         }
 
         // Get GID for audit
-        struct group *groupname = getgrnam("audit");
+        struct group *groupname = NULL;
+        groupname = getgrnam("audit");
         gid_t groupid = -1;
 
         if (groupname == NULL) {
           audit_msg(LOG_ERR, "Cannot find group audit.");
         }
         else {
-          groupid = groupname->gr_name;
+          groupid = groupname->gr_gid;
           audit_msg(LOG_ERR, "Audit GroupID is: %d", groupid);
         }
   
