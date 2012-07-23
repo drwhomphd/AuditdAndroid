@@ -1,5 +1,5 @@
 diff --git a/include/private/android_filesystem_config.h b/include/private/android_filesystem_config.h
-index 6521cbe..74aa49d 100644
+index 6521cbe..22f9cbd 100644
 --- a/include/private/android_filesystem_config.h
 +++ b/include/private/android_filesystem_config.h
 @@ -63,6 +63,8 @@
@@ -19,3 +19,14 @@ index 6521cbe..74aa49d 100644
      { "media_rw",  AID_MEDIA_RW, },
      { "vpn",       AID_VPN, },
      { "keystore",  AID_KEYSTORE, },
+@@ -227,6 +230,10 @@ static struct fs_path_config android_files[] = {
+     { 00750, AID_ROOT,      AID_SHELL,     "sbin/fs_mgr" },
+     { 00640, AID_ROOT,      AID_SHELL,     "fstab.*" },
+     { 00644, AID_ROOT,      AID_ROOT,       0 },
++
++    /* The following is used to make sure the audit socket has appropriate
++     * UID/GID permissions. */
++    { 00660, AID_AUDIT,     AID_AUDIT,    "/dev/audit" },
+ };
+ 
+ static inline void fs_config(const char *path, int dir,
