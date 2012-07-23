@@ -40,6 +40,11 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+
+// Used for chown functionality
+#include <pwd.h>
+#include <grp.h>
+
 #ifdef HAVE_LIBWRAP
 #include <tcpd.h>
 #endif
@@ -933,6 +938,37 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
           audit_msg(LOG_ERR, "Cannot chmod 0660 af_unix listener socket(%s)",
               strerror(errno));
           return 1;
+        }
+
+
+        // Get UID for audit
+        struct passwd *userpw = getpwnam("audit");
+        uid_t userid = -1;
+
+        if (userpw == NULL) {
+          audit_msg(LOG_ERR, "Cannot find user audit.");
+        }
+        else {
+          userid = userpw->pw_uid;
+          audit_msg(LOG_ERR, "Audit UserID is: %d", userid);
+        }
+
+        // Get GID for audit
+        struct group *groupname = getgrnam("audit");
+        gid_t groupid = -1;
+
+        if (groupname == NULL) {
+          audit_msg(LOG_ERR, "Cannot find group audit.");
+        }
+        else {
+          groupid = groupname->gr_name;
+          audit_msg(LOG_ERR, "Audit GroupID is: %d", groupid);
+        }
+  
+        // chown the file descriptor to be audit/audit
+        if (fchown(listen_socket,  userid, groupid)) {
+          audit_msg(LOG_ERR, "Cannot chown af_unix socket (%s)", 
+              strerror(errno));
         }
 
 	listen(listen_socket, config->tcp_listen_queue);
