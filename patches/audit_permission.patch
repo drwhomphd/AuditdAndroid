@@ -1,0 +1,18 @@
+diff --git a/data/etc/platform.xml b/data/etc/platform.xml
+index 4b93e74..d2490b1 100644
+--- a/data/etc/platform.xml
++++ b/data/etc/platform.xml
+@@ -77,7 +77,12 @@
+     <!-- The group that /cache belongs to, linked to the permission
+          set on the applications that can access /cache -->
+     <permission name="android.permission.ACCESS_CACHE_FILESYSTEM" >
+-        <group gid="cache" />
++      <group gid="cache" />
++    </permission>
++
++    <!-- Needed to access the audit stream via a Local Socket -->
++    <permission name="android.permission.AUDIT" >
++      <group gid="audit" />
+     </permission>
+ 
+     <!-- RW permissions to any system resources owned by group 'diag'.
