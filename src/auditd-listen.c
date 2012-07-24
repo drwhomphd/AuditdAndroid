@@ -976,42 +976,6 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 
 	use_libwrap = config->use_libwrap;
 
-#ifdef USE_GSSAPI
-	if (config->enable_krb5) {
-		const char *princ = config->krb5_principal;
-		const char *key_file;
-		struct stat st;
-
-		if (!princ)
-			princ = "auditd";
-		use_gss = 1;
-		/* This may fail, but we don't care.  */
-		unsetenv ("KRB5_KTNAME");
-		if (config->krb5_key_file)
-			key_file = config->krb5_key_file;
-		else
-			key_file = "/etc/audit/audit.key";
-		setenv ("KRB5_KTNAME", key_file, 1);
-
-		if (stat (key_file, &st) == 0) {
-			if ((st.st_mode & 07777) != 0400) {
-				audit_msg (LOG_ERR,
-			 "%s is not mode 0400 (it's %#o) - compromised key?",
-					   key_file, st.st_mode & 07777);
-				return -1;
-			}
-			if (st.st_uid != 0) {
-				audit_msg (LOG_ERR,
-			 "%s is not owned by root (it's %d) - compromised key?",
-					   key_file, st.st_uid);
-				return -1;
-			}
-		}
-
-		server_acquire_creds(princ, &server_creds);
-	}
-#endif
-
 	return 0;
 }
 
