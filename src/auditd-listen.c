@@ -45,14 +45,6 @@
 #include <pwd.h>
 #include <grp.h>
 
-#ifdef HAVE_LIBWRAP
-#include <tcpd.h>
-#endif
-#ifdef USE_GSSAPI
-#include <gssapi/gssapi.h>
-#include <gssapi/gssapi_generic.h>
-#include <krb5.h>
-#endif
 #include "libaudit.h"
 #include "auditd-event.h"
 #include "auditd-config.h"
