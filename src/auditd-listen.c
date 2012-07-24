@@ -924,15 +924,6 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 	cmd = fcntl(listen_socket, F_GETFD);
 	fcntl(listen_socket, F_SETFD, cmd|FD_CLOEXEC);
 
-        // Make sure the socket is read/write (0660) by
-        // the audit.audit user/grp
-        if (fchmod(listen_socket, AUDITD_SOCKET_MODE)) {
-          audit_msg(LOG_ERR, "Cannot chmod 0660 af_unix listener socket(%s)",
-              strerror(errno));
-          return 1;
-        }
-
-
         // Get UID for audit
         struct passwd *userpw = NULL;
         userpw = getpwnam("audit");
@@ -963,6 +954,14 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
         if (fchown(listen_socket,  userid, groupid)) {
           audit_msg(LOG_ERR, "Cannot chown af_unix socket (%s)", 
               strerror(errno));
+        }
+        
+        // Make sure the socket is read/write (0660) by
+        // the audit.audit user/grp
+        if (fchmod(listen_socket, AUDITD_SOCKET_MODE)) {
+          audit_msg(LOG_ERR, "Cannot chmod 0660 af_unix listener socket(%s)",
+              strerror(errno));
+          return 1;
         }
 
 	listen(listen_socket, config->tcp_listen_queue);
