@@ -924,6 +924,11 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
 	cmd = fcntl(listen_socket, F_GETFD);
 	fcntl(listen_socket, F_SETFD, cmd|FD_CLOEXEC);
 
+	listen(listen_socket, config->tcp_listen_queue);
+
+	audit_msg(LOG_DEBUG, "Listening on UNIX SOCKET %s",
+		config->log_file);
+
         // Get UID for audit
         struct passwd *userpw = NULL;
         userpw = getpwnam("audit");
@@ -951,7 +956,7 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
         }
   
         // chown the file descriptor to be audit/audit
-        if (fchown(listen_socket,  userid, groupid)) {
+        if (chown(config->log_file,  userid, groupid)) {
           audit_msg(LOG_ERR, "Cannot chown af_unix socket (%s)", 
               strerror(errno));
         }
@@ -964,10 +969,6 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
           return 1;
         }
 
-	listen(listen_socket, config->tcp_listen_queue);
-
-	audit_msg(LOG_DEBUG, "Listening on UNIX SOCKET %s",
-		config->log_file);
 
 	ev_io_init (&tcp_listen_watcher, auditd_tcp_listen_handler,
 			listen_socket, EV_READ);
