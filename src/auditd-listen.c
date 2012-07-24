@@ -963,7 +963,7 @@ int auditd_tcp_listen_init ( struct ev_loop *loop, struct daemon_conf *config )
         
         // Make sure the socket is read/write (0660) by
         // the audit.audit user/grp
-        if (fchmod(listen_socket, AUDITD_SOCKET_MODE)) {
+        if (chmod(config->log_file, AUDITD_SOCKET_MODE)) {
           audit_msg(LOG_ERR, "Cannot chmod 0660 af_unix listener socket(%s)",
               strerror(errno));
           return 1;
