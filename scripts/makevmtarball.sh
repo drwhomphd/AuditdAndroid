@@ -23,6 +23,11 @@ SCRATCHDIR=AndroidAuditX86Emu
 # make our scratch directory
 mkdir $SCRATCHDIR
 
+
+# make our sdcard
+mksdcard -l sdcard 1G sdcard.img
+mv ./sdcard.img $SCRATCHDIR/
+
 # copy over our image files
 cp ${ANDROIDROOT}/out/target/product/generic_x86/*.img ${SCRATCHDIR}/
 
