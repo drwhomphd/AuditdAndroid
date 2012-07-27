@@ -74,8 +74,6 @@ static int log_group_parser(struct nv_pair *nv, int line,
 		struct daemon_conf *config);
 static int qos_parser(struct nv_pair *nv, int line, 
 		struct daemon_conf *config);
-static int dispatch_parser(struct nv_pair *nv, int line,
-		struct daemon_conf *config);
 static int name_format_parser(struct nv_pair *nv, int line,
 		struct daemon_conf *config);
 static int name_parser(struct nv_pair *nv, int line,
