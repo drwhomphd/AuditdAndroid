@@ -42,7 +42,7 @@
 #include "libaudit.h"
 #include "auditd-event.h"
 #include "auditd-config.h"
-#include "auditd-dispatch.h"
+// #include "auditd-dispatch.h"
 #include "auditd-listen.h"
 #include "private.h"
 
@@ -377,7 +377,7 @@ static void netlink_handler(struct ev_loop *loop, struct ev_io *io,
 			close_down();
 			if (pidfile)
 				unlink(pidfile);
-			shutdown_dispatcher();
+			//shutdown_dispatcher();
 			return;
 		}
 	}
@@ -709,6 +709,8 @@ int main(int argc, char *argv[])
 	ev_signal_start (loop, &sigchld_watcher);
 
 
+        /** auditd_tcp_listen_init is important as the TCP system
+         * is now used as a dispatcher instead of an aggregator. */
 	if (auditd_tcp_listen_init (loop, &config)) {
 		char emsg[DEFAULT_BUF_SZ];
 		if (*subj)
