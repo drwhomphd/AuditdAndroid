@@ -36,7 +36,7 @@
 #include <limits.h>     /* POSIX_HOST_NAME_MAX */
 
 #include "auditd-event.h"
-#include "auditd-dispatch.h"
+//#include "auditd-dispatch.h"
 #include "auditd-listen.h"
 #include "libaudit.h"
 
@@ -1118,69 +1118,7 @@ static void reconfigure(struct auditd_consumer_data *data)
 	/* Now look at audit dispatcher changes */
 	oconf->qos = nconf->qos; // dispatcher qos
 
-	// do the dispatcher app change
-	if (oconf->dispatcher || nconf->dispatcher) {
-		// none before, start new one
-		if (oconf->dispatcher == NULL) {
-			oconf->dispatcher = strdup(nconf->dispatcher);
-			if (oconf->dispatcher == NULL) {
-				int saved_errno = errno;
-				audit_msg(LOG_NOTICE,
-					"Could not allocate dispatcher memory"
-					" in reconfigure");
-				// Likely errors: ENOMEM
-				do_disk_error_action("reconfig", data->config,
-							saved_errno);
-			}
-			if(init_dispatcher(oconf)) {// dispatcher & qos is used
-				int saved_errno = errno;
-				audit_msg(LOG_NOTICE,
-					"Could not start dispatcher %s"
-					" in reconfigure", oconf->dispatcher);
-				// Likely errors: Socketpairs or exec perms
-				do_disk_error_action("reconfig", data->config,
-							saved_errno);
-			}
-		} 
-		// have one, but none after this
-		else if (nconf->dispatcher == NULL) {
-			shutdown_dispatcher();
-			free((char *)oconf->dispatcher);
-			oconf->dispatcher = NULL;
-		} 
-		// they are different apps
-		else if (strcmp(oconf->dispatcher, nconf->dispatcher)) {
-			shutdown_dispatcher();
-			free((char *)oconf->dispatcher);
-			oconf->dispatcher = strdup(nconf->dispatcher);
-			if (oconf->dispatcher == NULL) {
-				int saved_errno = errno;
-				audit_msg(LOG_NOTICE,
-					"Could not allocate dispatcher memory"
-					" in reconfigure");
-				// Likely errors: ENOMEM
-				do_disk_error_action("reconfig", data->config,
-							saved_errno);
-			}
-			if(init_dispatcher(oconf)) {// dispatcher & qos is used
-				int saved_errno = errno;
-				audit_msg(LOG_NOTICE,
-					"Could not start dispatcher %s"
-					" in reconfigure", oconf->dispatcher);
-				// Likely errors: Socketpairs or exec perms
-				do_disk_error_action("reconfig", data->config,
-							saved_errno);
-			}
-		}
-		// they are the same app - just signal it
-		else {
-			reconfigure_dispatcher();
-			free((char *)nconf->dispatcher);
-			nconf->dispatcher = NULL;
-		}
-	}
-
-	/* Look at network things that do not need restarting */
+        /* Look at network things that do not need restarting */
 	if (oconf->tcp_client_min_port != nconf->tcp_client_min_port ||
 		    oconf->tcp_client_max_port != nconf->tcp_client_max_port ||
 		    oconf->tcp_max_per_addr != nconf->tcp_max_per_addr) {
