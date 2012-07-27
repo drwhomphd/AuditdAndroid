@@ -135,7 +135,6 @@ static const struct kw_pair keywords[] =
   {"freq",                     freq_parser,			0 },
   /* 
   {"num_logs",                 num_logs_parser,			0 },
-  {"dispatcher",               dispatch_parser,			0 },
   */
   {"name_format",              name_format_parser,		0 },
   {"name",                     name_parser,			0 },
@@ -252,7 +251,6 @@ static void clear_config(struct daemon_conf *config)
 	config->flush =  FT_NONE;
 	config->freq = 0;
 	config->num_logs = 0L;
-	config->dispatcher = NULL;
 	config->node_name_format = N_NONE;
 	config->node_name = NULL;
 	config->max_log_size = 0L;
@@ -618,78 +616,6 @@ static int qos_parser(struct nv_pair *nv, int line,
 	}
 	audit_msg(LOG_ERR, "Option %s not found - line %d", nv->value, line);
 	return 1;
-}
-
-static int dispatch_parser(struct nv_pair *nv, int line,
-	struct daemon_conf *config)
-{
-	char *dir = NULL, *tdir;
-	int fd;
-	struct stat buf;
-
-	audit_msg(LOG_DEBUG, "dispatch_parser called with: %s", nv->value);
-	if (nv->value == NULL) {
-		config->dispatcher = NULL;
-		return 0;
-	}
-
-	/* get dir from name. */
-	tdir = strdup(nv->value);
-	if (tdir)
-		dir = dirname(tdir);
-	if (dir == NULL || strlen(dir) < 4) { //  '/var' is shortest dirname
-		audit_msg(LOG_ERR,
-			"The directory name: %s is too short - line %d",
-			dir, line);
-		free(tdir);
-		return 1;
-	}
-
-	free((void *)tdir);
-
-	/* Bypass the perms check if group is not root since
-	 * this will fail under normal circumstances */
-	if ((config->log_group != 0 && getuid() != 0) ||
-				(log_test == TEST_SEARCH)) 
-		goto bypass;
-
-	/* if the file exists, see that its regular, owned by root,
-	 * and not world anything */
-	fd = open(nv->value, O_RDONLY);
-	if (fd < 0) {
-		audit_msg(LOG_ERR, "Unable to open %s (%s)", nv->value,
-			strerror(errno));
-		return 1;
-	}
-	if (fstat(fd, &buf) < 0) {
-		audit_msg(LOG_ERR, "Unable to stat %s (%s)", nv->value,
-			strerror(errno));
-		close(fd);
-		return 1;
-	}
-	close(fd);
-	if (!S_ISREG(buf.st_mode)) {
-		audit_msg(LOG_ERR, "%s is not a regular file", nv->value);
-		return 1;
-	}
-	if (buf.st_uid != 0) {
-		audit_msg(LOG_ERR, "%s is not owned by root", nv->value);
-		return 1;
-	}
-	if ((buf.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO)) !=
-			   (S_IRWXU|S_IRGRP|S_IXGRP) && 
-	    (buf.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO)) !=
-			   (S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)) {
-		audit_msg(LOG_ERR, "%s permissions should be 0750 or 0755",
-				nv->value);
-		return 1;
-	}
-bypass:
-	free((void *)config->dispatcher);
-	config->dispatcher = strdup(nv->value);
-	if (config->dispatcher == NULL)
-		return 1;
-	return 0;
 }
 
 static int name_format_parser(struct nv_pair *nv, int line,
