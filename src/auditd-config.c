@@ -129,7 +129,7 @@ static int sanity_check(struct daemon_conf *config);
 static const struct kw_pair keywords[] = 
 {
   {"socket_file",              socket_file_parser,              0 },
-  {"log_file",                 log_file_parser,			0 },
+  //{"log_file",                 log_file_parser,			0 },
   {"log_format",               log_format_parser,		0 },
   {"log_group",                log_group_parser,		0 },
   {"flush",                    flush_parser,			0 },
@@ -161,7 +161,7 @@ static const struct kw_pair keywords[] =
   {"enable_krb5",              enable_krb5_parser,              0 },
   {"krb5_principal",           krb5_principal_parser,           0 },
   {"krb5_key_file",            krb5_key_file_parser,            0 },
-  { NULL,                      NULL }
+  { NULL,                      NULL },
 };
 
 static const struct nv_list log_formats[] =
