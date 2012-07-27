@@ -68,6 +68,8 @@ static int nv_split(char *buf, struct nv_pair *nv);
 static const struct kw_pair *kw_lookup(const char *val);
 static int log_file_parser(struct nv_pair *nv, int line, 
 		struct daemon_conf *config);
+static int socket_file_parser(struct nv_pair *nv, int line, 
+		struct daemon_conf *config);
 static int num_logs_parser(struct nv_pair *nv, int line, 
 		struct daemon_conf *config);
 static int log_group_parser(struct nv_pair *nv, int line, 
@@ -126,6 +128,7 @@ static int sanity_check(struct daemon_conf *config);
 
 static const struct kw_pair keywords[] = 
 {
+  {"socket_file",              socket_file_parser,              0 },
   {"log_file",                 log_file_parser,			0 },
   {"log_format",               log_format_parser,		0 },
   {"log_group",                log_group_parser,		0 },
@@ -477,6 +480,46 @@ static const struct kw_pair *kw_lookup(const char *val)
 	}
 	return &keywords[i];
 }
+
+static int socket_file_parser(struct nv_pair *nv, int line,
+	struct daemon_conf *config)
+{
+	char *dir = NULL, *tdir;
+	DIR *d;
+	int fd, mode;
+	struct stat buf;
+
+	audit_msg(LOG_DEBUG, "socket_file_parser called with: %s", nv->value);
+
+	/* get dir from name. */
+	tdir = strdup(nv->value);
+	if (tdir)
+		dir = dirname(tdir);
+	if (dir == NULL || strlen(dir) < 4) { //  '/var' is shortest dirname
+		audit_msg(LOG_ERR, 
+			"The directory name: %s is too short - line %d", 
+			dir, line);
+		free((void *)tdir);
+		return 1;
+	}
+
+	/* verify the directory path exists */
+	d = opendir(dir);
+	if (d == NULL) {
+		audit_msg(LOG_ERR, "Could not open dir %s (%s)", dir, 
+			strerror(errno));
+		free((void *)tdir);
+		return 1;
+	}
+	free((void *)tdir);
+	closedir(d);
+
+	free((void *)config->log_file);
+	config->log_file = strdup(nv->value);
+	if (config->log_file == NULL)
+		return 1;
+	return 0;
+}
  
 static int log_file_parser(struct nv_pair *nv, int line,
 	struct daemon_conf *config)
@@ -513,26 +556,26 @@ static int log_file_parser(struct nv_pair *nv, int line,
 
 	/* if the file exists, see that its regular, owned by root, 
 	 * and not world anything */
-        /*
+        
 	if (log_test == TEST_AUDITD)
 		mode = O_APPEND;
 	else
 		mode = O_RDONLY;
-        */
-	//fd = open(nv->value, mode);
-        //
+        
+        fd = open(nv->value, mode);
+        
 	if (fd < 0) {
 		if (errno == ENOENT) {
                         audit_msg(LOG_ERR, "Log file does not yet exist.");
-			//fd = create_log_file(nv->value);
-			//if (fd < 0) 
-			//	return 1;
+			fd = create_log_file(nv->value);
+			if (fd < 0) 
+		         	return 1;
 		} else {
 			audit_msg(LOG_ERR, "Unable to open %s (%s)", nv->value, 
 					strerror(errno));
 			return 1;
 		}
-	}/*
+	}
 	if (fstat(fd, &buf) < 0) {
 		audit_msg(LOG_ERR, "Unable to stat %s (%s)", 
 					nv->value, strerror(errno));
@@ -557,7 +600,7 @@ static int log_file_parser(struct nv_pair *nv, int line,
 		audit_msg(LOG_ERR, "audit log is not writable by owner");
 		return 1;
 	}
-*/
+
 	free((void *)config->log_file);
 	config->log_file = strdup(nv->value);
 	if (config->log_file == NULL)
