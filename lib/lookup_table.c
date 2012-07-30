@@ -118,16 +118,9 @@ int audit_name_to_syscall(const char *sc, int machine)
 		case MACH_S390:
 			found = s390_syscall_s2i(sc, &res);
 			break;
-#ifdef WITH_ALPHA
-	        case MACH_ALPHA:
-			found = alpha_syscall_s2i(sc, &res);
-			break;
-#endif
-#ifdef WITH_ARMEB
 	        case MACH_ARMEB:
 			found = armeb_syscall_s2i(sc, &res);
 			break;
-#endif
 #endif
 		default:
 			return -1;
