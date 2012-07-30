@@ -691,13 +691,13 @@ static int setopt(int count, int lineno, char *vars[])
 				machine = audit_detect_machine();
 				if (machine < 0) {
 					fprintf(stderr, 
-					    "Error detecting machine type");
+					    "Error detecting machine type\n");
 					return -1;
 				}
 				elf = audit_machine_to_elf(machine);
                                 if (elf == 0) {
 					fprintf(stderr, 
-					    "Error looking up elf type");
+					    "Error looking up elf type\n");
 					return -1;
 				}
 				_audit_elf = elf;
