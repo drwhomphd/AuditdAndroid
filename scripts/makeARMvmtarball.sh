@@ -18,7 +18,7 @@ KERNELIMG="../prebuilt/qemu-audit-arm-kernel"
 # Android root should be the first command line argument
 ANDROIDROOT=$1
 
-SCRATCHDIR=AndroidAuditXARMEmu
+SCRATCHDIR=AndroidAuditARMEmu
 
 # make our scratch directory
 mkdir $SCRATCHDIR
