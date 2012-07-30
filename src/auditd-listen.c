@@ -767,21 +767,6 @@ static void auditd_tcp_listen_handler( struct ev_loop *loop,
 		return;
 	}
 
-	if (use_libwrap) {
-		if (auditd_tcpd_check(afd)) {
-			shutdown(afd, SHUT_RDWR);
-			close(afd);
-	        	audit_msg(LOG_ERR, "TCP connection from %s rejected",
-					sockaddr_to_addr4(&aaddr));
-			snprintf(emsg, sizeof(emsg),
-				"op=wrap addr=%s port=%d res=no",
-				sockaddr_to_ipv4(&aaddr),
-				ntohs (aaddr.sin_port));
-			send_audit_event(AUDIT_DAEMON_ACCEPT, emsg);
-			return;
-		}
-	}
-
 	/* Verify it's coming from an authorized port.  We assume the firewall
 	 * will block attempts from unauthorized machines.  */
 	if (min_port > ntohs (aaddr.sin_port) ||
