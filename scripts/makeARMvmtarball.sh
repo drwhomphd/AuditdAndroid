@@ -13,29 +13,28 @@
 
 # @TODO: Add the ability for this script to print out its expected command line variables and check that they exist. 
 
-KERNELIMG="../prebuilt/qemu-audit-x86-kernel"
+KERNELIMG="../prebuilt/qemu-audit-arm-kernel"
 
 # Android root should be the first command line argument
 ANDROIDROOT=$1
 
-SCRATCHDIR=AndroidAuditX86Emu
+SCRATCHDIR=AndroidAuditXARMEmu
 
 # make our scratch directory
 mkdir $SCRATCHDIR
-
 
 # make our sdcard
 mksdcard -l sdcard 1G sdcard.img
 mv ./sdcard.img $SCRATCHDIR/
 
 # copy over our image files
-cp ${ANDROIDROOT}/out/target/product/generic_x86/*.img ${SCRATCHDIR}/
+cp ${ANDROIDROOT}/out/target/product/generic/*.img ${SCRATCHDIR}/
 
-# copy over our prebuilt kernel
+# copy over our prebuilt kernel and make a kernel-qemu softlink to it
 cp $KERNELIMG $SCRATCHDIR
 
-# copy our start scripts
-cp ./startvm.sh ${SCRATCHDIR}/
+# copy our start vm script removing the -x86 from the emulator command.
+cp ./startARMvm.sh ${SCRATCHDIR}/startvm.sh
 cp ./startaudit.sh ${SCRATCHDIR}/
 
 # tar+bzip up the scratchdir
