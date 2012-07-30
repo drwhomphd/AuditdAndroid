@@ -1,0 +1,94 @@
+diff --git a/arch/arm/include/asm/thread_info.h b/arch/arm/include/asm/thread_info.h
+index b9dc8a8..6c68341 100644
+--- a/arch/arm/include/asm/thread_info.h
++++ b/arch/arm/include/asm/thread_info.h
+@@ -134,6 +134,7 @@ extern void vfp_sync_state(struct thread_info *thread);
+ #define TIF_SIGPENDING		0
+ #define TIF_NEED_RESCHED	1
+ #define TIF_SYSCALL_TRACE	8
++#define TIF_SYSCALL_AUDIT       9
+ #define TIF_POLLING_NRFLAG	16
+ #define TIF_USING_IWMMXT	17
+ #define TIF_MEMDIE		18
+@@ -142,10 +143,15 @@ extern void vfp_sync_state(struct thread_info *thread);
+ #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+ #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
++#define _TIF_SYSCALL_AUDIT      (1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+ #define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
+ #define _TIF_FREEZE		(1 << TIF_FREEZE)
+ 
++
++/* Checks for any syscall work in entry-common.S */
++#define _TIF_SYSCALL_WORK (_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT)
++
+ /*
+  * Change these and you break ASM code in entry-common.S
+  */
+diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
+index 159d041..ef9050f 100644
+--- a/arch/arm/kernel/entry-common.S
++++ b/arch/arm/kernel/entry-common.S
+@@ -87,7 +87,7 @@ ENTRY(ret_from_fork)
+ 	get_thread_info tsk
+ 	ldr	r1, [tsk, #TI_FLAGS]		@ check for syscall tracing
+ 	mov	why, #1
+-	tst	r1, #_TIF_SYSCALL_TRACE		@ are we tracing syscalls?
++	tst	r1, #_TIF_SYSCALL_WORK		@ are we tracing syscalls?
+ 	beq	ret_slow_syscall
+ 	mov	r1, sp
+ 	mov	r0, #1				@ trace exit [IP = 1]
+@@ -261,7 +261,7 @@ ENTRY(vector_swi)
+ #endif
+ 
+ 	stmdb	sp!, {r4, r5}			@ push fifth and sixth args
+-	tst	ip, #_TIF_SYSCALL_TRACE		@ are we tracing syscalls?
++	tst	ip, #_TIF_SYSCALL_WORK		@ are we tracing syscalls?
+ 	bne	__sys_trace
+ 
+ 	cmp	scno, #NR_syscalls		@ check upper syscall limit
+diff --git a/arch/arm/kernel/ptrace.c b/arch/arm/kernel/ptrace.c
+index 89882a1..79906d5 100644
+--- a/arch/arm/kernel/ptrace.c
++++ b/arch/arm/kernel/ptrace.c
+@@ -19,10 +19,12 @@
+ #include <linux/init.h>
+ #include <linux/signal.h>
+ #include <linux/uaccess.h>
++#include <linux/audit.h>
+ 
+ #include <asm/pgtable.h>
+ #include <asm/system.h>
+ #include <asm/traps.h>
++#include <asm/elf.h>
+ 
+ #include "ptrace.h"
+ 
+@@ -845,6 +847,13 @@ asmlinkage int syscall_trace(int why, struct pt_regs *regs, int scno)
+ {
+ 	unsigned long ip;
+ 
++        if (why)
++          audit_syscall_exit(AUDITSC_RESULT(regs->ARM_r0), regs->ARM_r0 );
++        else
++          audit_syscall_entry(AUDIT_ARCH_ARM, scno, regs->ARM_r0,
++              regs->ARM_r1, regs->ARM_r2, regs->ARM_r3);
++
++
+ 	if (!test_thread_flag(TIF_SYSCALL_TRACE))
+ 		return scno;
+ 	if (!(current->ptrace & PT_PTRACED))
+diff --git a/init/Kconfig b/init/Kconfig
+index bc99154..40a9e0b 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -226,7 +226,7 @@ config AUDIT
+ 
+ config AUDITSYSCALL
+ 	bool "Enable system-call auditing support"
+-	depends on AUDIT && (X86 || PPC || PPC64 || S390 || IA64 || UML || SPARC64|| SUPERH)
++	depends on AUDIT && (X86 || PPC || PPC64 || S390 || IA64 || UML || SPARC64|| SUPERH || ARM)
+ 	default y if SECURITY_SELINUX
+ 	help
+ 	  Enable low-overhead system-call auditing infrastructure that
