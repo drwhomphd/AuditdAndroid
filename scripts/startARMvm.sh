@@ -1,0 +1,1 @@
+emulator -verbose -memory 1024 -partition-size 256 -sysdir ./ -datadir ./ -show-kernel -sdcard ./sdcard.img -system ./system.img -kernel ./qemu-audit-arm-kernel -ramdisk ./ramdisk.img -data ./userdata.img -qemu -cpu cortex-a8 -append audit=1
