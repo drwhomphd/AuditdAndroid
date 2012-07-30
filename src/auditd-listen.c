@@ -767,22 +767,6 @@ static void auditd_tcp_listen_handler( struct ev_loop *loop,
 		return;
 	}
 
-	/* Verify it's coming from an authorized port.  We assume the firewall
-	 * will block attempts from unauthorized machines.  */
-	if (min_port > ntohs (aaddr.sin_port) ||
-					ntohs (aaddr.sin_port) > max_port) {
-        	audit_msg(LOG_ERR, "TCP connection from %s rejected",
-				sockaddr_to_addr4(&aaddr));
-		snprintf(emsg, sizeof(emsg),
-			"op=port addr=%s port=%d res=no",
-			sockaddr_to_ipv4(&aaddr),
-			ntohs (aaddr.sin_port));
-		send_audit_event(AUDIT_DAEMON_ACCEPT, emsg);
-		shutdown(afd, SHUT_RDWR);
-		close(afd);
-		return;
-	}
-
 	/* Make sure we don't have too many connections */
 	if (check_num_connections(&aaddr)) {
         	audit_msg(LOG_ERR, "Too many connections from %s - rejected",
