@@ -25,8 +25,6 @@ LOCAL_C_INCLUDES :=	$(MY_ROOT_PATH) \
 			$(MY_ROOT_PATH)/kernel \
 			$(MY_ROOT_PATH)/src
 
-LOCAL_CFLAGS :=  -fPIE -DPIE -D_GNU_SOURCE -fno-strict-aliasing 
-
 LOCAL_SHARED_LIBRARIES := libc libcutils 
 
 include $(BUILD_EXECUTABLE)
@@ -61,8 +59,6 @@ LOCAL_C_INCLUDES :=	$(MY_ROOT_PATH) \
 			$(MY_ROOT_PATH)/libc \
 			$(MY_ROOT_PATH)/kernel \
 			$(MY_ROOT_PATH)/src
-
-LOCAL_CFLAGS :=  -fPIE -DPIE -D_GNU_SOURCE -fno-strict-aliasing 
 
 LOCAL_SHARED_LIBRARIES := libc libcutils
 
