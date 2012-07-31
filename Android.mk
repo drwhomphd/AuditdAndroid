@@ -7,7 +7,7 @@ MY_ROOT_PATH := external/android_audit
 ETC_DIR := $(TARGET_OUT)/etc/audit
 
 LOCAL_MODULE := auditctl
-LOCAL_MODULE_TAGS := userdebug
+LOCAL_MODULE_TAGS := debug
 LOCAL_SRC_FILES:= lib/libaudit.c \
 			lib/message.c \
 			lib/netlink.c \
@@ -36,7 +36,7 @@ include $(CLEAR_VARS)
 MY_ROOT_PATH := external/android_audit
 
 LOCAL_MODULE := auditd
-LOCAL_MODULE_TAGS := userdebug
+LOCAL_MODULE_TAGS := debug
 LOCAL_SRC_FILES:= lib/libaudit.c \
 			lib/message.c \
 			lib/netlink.c \
