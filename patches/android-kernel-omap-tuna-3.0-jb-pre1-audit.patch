@@ -1,0 +1,81 @@
+diff --git a/arch/arm/include/asm/thread_info.h b/arch/arm/include/asm/thread_info.h
+index 7b5cc8d..de1039c 100644
+--- a/arch/arm/include/asm/thread_info.h
++++ b/arch/arm/include/asm/thread_info.h
+@@ -139,6 +139,7 @@ extern void vfp_flush_hwstate(struct thread_info *);
+ #define TIF_NEED_RESCHED	1
+ #define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
+ #define TIF_SYSCALL_TRACE	8
++#define TIF_SYSCALL_AUDIT       9
+ #define TIF_POLLING_NRFLAG	16
+ #define TIF_USING_IWMMXT	17
+ #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+@@ -150,12 +151,16 @@ extern void vfp_flush_hwstate(struct thread_info *);
+ #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
++#define _TIF_SYSCALL_AUDIT      (1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+ #define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
+ #define _TIF_FREEZE		(1 << TIF_FREEZE)
+ #define _TIF_RESTORE_SIGMASK	(1 << TIF_RESTORE_SIGMASK)
+ #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ 
++/* Checks for any syscall work in entry-common.S */
++#define _TIF_SYSCALL_WORK (_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT)
++
+ /*
+  * Change these and you break ASM code in entry-common.S
+  */
+diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
+index b2a27b6..520889c 100644
+--- a/arch/arm/kernel/entry-common.S
++++ b/arch/arm/kernel/entry-common.S
+@@ -87,7 +87,7 @@ ENTRY(ret_from_fork)
+ 	get_thread_info tsk
+ 	ldr	r1, [tsk, #TI_FLAGS]		@ check for syscall tracing
+ 	mov	why, #1
+-	tst	r1, #_TIF_SYSCALL_TRACE		@ are we tracing syscalls?
++	tst	r1, #_TIF_SYSCALL_WORK		@ are we tracing syscalls?
+ 	beq	ret_slow_syscall
+ 	mov	r1, sp
+ 	mov	r0, #1				@ trace exit [IP = 1]
+@@ -443,7 +443,7 @@ ENTRY(vector_swi)
+ 1:
+ #endif
+ 
+-	tst	r10, #_TIF_SYSCALL_TRACE		@ are we tracing syscalls?
++	tst	r10, #_TIF_SYSCALL_WORK		@ are we tracing syscalls?
+ 	bne	__sys_trace
+ 
+ 	cmp	scno, #NR_syscalls		@ check upper syscall limit
+diff --git a/arch/arm/kernel/ptrace.c b/arch/arm/kernel/ptrace.c
+index 172ae01..a24a50c 100644
+--- a/arch/arm/kernel/ptrace.c
++++ b/arch/arm/kernel/ptrace.c
+@@ -928,6 +928,12 @@ asmlinkage int syscall_trace(int why, struct pt_regs *regs, int scno)
+ {
+ 	unsigned long ip;
+ 
++        if (why)
++          audit_syscall_exit(AUDITSC_RESULT(regs->ARM_r0), regs->ARM_r0);
++        else
++          audit_syscall_entry(AUDIT_ARCH_ARM, scno, regs->ARM_r0,
++              regs->ARM_r1, regs->ARM_r2, regs->ARM_r3);
++
+ 	if (!test_thread_flag(TIF_SYSCALL_TRACE))
+ 		return scno;
+ 	if (!(current->ptrace & PT_PTRACED))
+diff --git a/init/Kconfig b/init/Kconfig
+index 4fe9168..cad41fd 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -355,7 +355,7 @@ config AUDIT
+ 
+ config AUDITSYSCALL
+ 	bool "Enable system-call auditing support"
+-	depends on AUDIT && (X86 || PPC || S390 || IA64 || UML || SPARC64 || SUPERH)
++	depends on AUDIT && (X86 || PPC || S390 || IA64 || UML || SPARC64 || SUPERH ||ARM)
+ 	default y if SECURITY_SELINUX
+ 	help
+ 	  Enable low-overhead system-call auditing infrastructure that
