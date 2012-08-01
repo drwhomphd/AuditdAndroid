@@ -50,7 +50,6 @@ LOCAL_SRC_FILES:= lib/libaudit.c \
 			src/auditd-config.c \
 			src/auditd-reconfig.c \
 			src/auditd-sendmail.c \
-			src/auditd-dispatch.c \
 			src/auditd-listen.c \
 			src/ev.c \
 			src/event.c
