@@ -377,7 +377,6 @@ static void netlink_handler(struct ev_loop *loop, struct ev_io *io,
 			close_down();
 			if (pidfile)
 				unlink(pidfile);
-			//shutdown_dispatcher();
 			return;
 		}
 	}
@@ -584,14 +583,6 @@ int main(int argc, char *argv[])
 		tell_parent(FAILURE);
 		return 1;
 	}
-/*
-	if (init_dispatcher(&config)) {
-		if (pidfile)
-			unlink(pidfile);
-		tell_parent(FAILURE);
-		return 1;
-	}
-*/
 	/* Get machine name ready for use */
 	if (resolve_node(&config)) {
 		if (pidfile)
@@ -629,7 +620,6 @@ int main(int argc, char *argv[])
         		audit_msg(LOG_ERR, "Cannot send start message");
 			if (pidfile)
 				unlink(pidfile);
-			shutdown_dispatcher();
 			tell_parent(FAILURE);
 			return 1;
 		}
@@ -658,7 +648,6 @@ int main(int argc, char *argv[])
 		close_down();
 		if (pidfile)
 			unlink(pidfile);
-		shutdown_dispatcher();
 		tell_parent(FAILURE);
 		return 1;
 	}
@@ -683,7 +672,6 @@ int main(int argc, char *argv[])
 		close_down();
 		if (pidfile)
 			unlink(pidfile);
-		shutdown_dispatcher();
 		tell_parent(FAILURE);
 		return 1;
 	}
@@ -780,7 +768,6 @@ int main(int argc, char *argv[])
 	// Give DAEMON_END event a little time to be sent in case
 	// of remote logging
 	usleep(10000); // 10 milliseconds
-	shutdown_dispatcher();
 
 	// Tear down IO watchers Part 3
 	ev_signal_stop (loop, &sigchld_watcher);

@@ -48,7 +48,6 @@ LOCAL_SRC_FILES:= lib/libaudit.c \
 			src/auditd-config.c \
 			src/auditd-reconfig.c \
 			src/auditd-sendmail.c \
-			src/auditd-dispatch.c \
 			src/auditd-listen.c \
 			src/ev.c \
 			src/event.c
@@ -71,7 +70,7 @@ LOCAL_MODULE := spade-audit
 LOCAL_MODULE_TAGS := eng
 LOCAL_SRC_FILES:= src/spadeLinuxAudit.c
 LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing 
-LOCAL_LDLIBS := -lm -lpthread 
+LOCAL_LDLIBS := -lm -lpthread -lc
 
 include $(BUILD_EXECUTABLE)
 
