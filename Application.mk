@@ -6,6 +6,9 @@
 # Set the root project directory (where the Android.mk will be)
 APP_PROJECT_PATH := ./
 
+# Target Gingerbread
+APP_PLATFORM := android-9
+
 # Set our build script because it's not in ./jni
 APP_BUILD_SCRIPT := ./Android-NDK.mk
 
@@ -18,4 +21,4 @@ APP_OPTIM := debug
 APP_CPPFLAGS := 
 
 # We starget the x86 ABI for now
-APP_ABI := x86
+APP_ABI := armeabi
