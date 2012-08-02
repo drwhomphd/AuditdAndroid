@@ -48,6 +48,7 @@
 #include "libaudit.h"
 #include "auditd-event.h"
 #include "auditd-config.h"
+#include "auditd-parse.h"
 #include "private.h"
 
 #include "ev.h"
