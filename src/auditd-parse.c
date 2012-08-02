@@ -238,10 +238,33 @@ static const char *print_sockaddr(const char *val)
   return out;
 }
 
-const char *interpret_reply(char *msg, int reply_type) {
+/**
+ *
+ * @param[in] msg           Message buffer of an audit reply
+ * @param[in] reply_type    Type of audit reply
+ * @return A string with the pretty printed message.
+ *
+ * Takes in the message portion of an audit reply and its type. Based
+ * on the type, it calls the proper print_ function and obtains a
+ * "pretty printed" set of information in a character pointer.
+ * It returns that character pointer. This character pointer MUST BE
+ * FREED by the developer. It was created with asprintf in the print_
+ * functions.
+ */
+const char *interpret_reply(char *msg, int length, int reply_type) {
 
   // Parse based on the reply type
-  return "empty";
-
-
+  switch(reply_type) {
+    default:
+      {
+        // No parsing is needed we return the same message that came in,
+        // adding the type to the front of it.
+        char *samemsg;
+        asprintf(&samemsg, "type=%s %.*s\n", 
+          audit_msg_type_to_name(reply_type),
+          length,
+          msg);
+        return samemsg;
+      }
+  }
 }

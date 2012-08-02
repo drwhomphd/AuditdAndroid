@@ -1000,9 +1000,10 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
   struct ev_tcp *ev, *next = NULL;
   int active;
   int len;
-  char *msgtoclient;
+  char *msgfromparser; // must be free'd
 
   // audit_reply messages may contain newlines. Parse them out.
+  // Candidate code for parse_removenewlines function.
   char *tmpstr = rep->message;
   while(( tmpstr = strchr(tmpstr, 0x0A)) != NULL) {
     if (tmpstr != &rep->message[rep->len-1])
@@ -1010,22 +1011,17 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
     else
       break;
   }
-    
-  // Use an allcoated sprintf. type and msg are included for now
-  // because SPADE has convoluted parsing code.
-  // @TODO: Change this back to just writing the message.
-  len = asprintf(&msgtoclient, "type=%s %.*s\n", 
-      audit_msg_type_to_name(rep->type),
-      rep->len,
-      rep->message);
 
+  // Get our parsed message
+  msgfromparser = interpret_reply(rep->message, rep->len, rep->type);
+  len = strlen(msgfromparser); //asprintf created string so /0 is there.
 
   // For each client that's connected, send them the message.
   for (ev = client_chain; ev; ev = next) {
 
     // New code writing the string created... will be removed when
     // SPADE parsing is rewritten
-    ar_write(ev->io.fd, msgtoclient, len);
+    ar_write(ev->io.fd, msgfromparser, len);
 
     // Old code. Saved because it'll be used when SPADE is rewritten
     // ar_write(ev->io.fd,rep->message, rep->len);
@@ -1034,7 +1030,7 @@ int dispatch_event_to_socket(const struct audit_reply *rep) {
     ar_write(ev->io.fd, "\n\n", 2);
   }
 
-  free(msgtoclient);
+  free(msgfromparser);
 
   return 0;
 }

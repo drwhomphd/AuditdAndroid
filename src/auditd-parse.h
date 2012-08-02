@@ -34,7 +34,7 @@ extern "C" {
 
 
 char *parse_unescape(char *buf);
-const char *interpret_reply( char *msg, int reply_type);
+const char *interpret_reply( char *msg, int length, int reply_type);
 
 /* Make these hidden to prevent conflicts */
 //hidden_proto(lookup_type);
