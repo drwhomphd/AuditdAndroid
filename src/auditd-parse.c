@@ -255,6 +255,15 @@ const char *interpret_reply(char *msg, int length, int reply_type) {
 
   // Parse based on the reply type
   switch(reply_type) {
+    case AUDIT_SOCKADDR:
+      {
+        char *addrmsg;
+        asprintf(&addrmsg, "type=%s %.*s AUDIT_SOCKADDR\n",
+            audit_msg_type_to_name(reply_type),
+            length,
+            msg);
+        return addrmsg;
+      }
     default:
       {
         // No parsing is needed we return the same message that came in,
