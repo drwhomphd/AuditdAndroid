@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 
-char *parse_unescape(char *buf);
+char *parse_unescape(char *buf, int length);
 const char *interpret_reply( char *msg, int length, int reply_type);
 
 /* Make these hidden to prevent conflicts */

@@ -96,70 +96,74 @@ static int is_hex_string(const char *str)
   return 1;
 }
 
-/* returns a freshly malloc'ed and converted buffer */
-char *parse_unescape(char *buf)
+/* returns a freshly malloc'ed and converted buffer of an expected size */
+char *parse_unescape(char *buf, int length)
 {
-  int len, i;
-  char saved, *str, *ptr = buf;
+  int i;
+  char *ptr, *copy;
 
-  /* Find the end of the name */
-  if (*ptr == '(') {
-    ptr = strchr(ptr, ')');
-    if (ptr == NULL)
-      return NULL;
-    else
-      ptr++;
-  } else {
-    while (isxdigit(*ptr))
-      ptr++;
-  }
-  saved = *ptr;
-  *ptr = 0;
-  str = strdup(buf);
-  *ptr = saved;
-
-  /* See if its '(null)' from the kernel */
+  // Make sure key is not null from kernel
   if (*buf == '(')
-    return str;
+    return NULL;
+
+  // String needs to be long enough for ???
+  if (length < 2)
+    return NULL;
+
+  // Allocate copy
+  copy = (char *) malloc(length+1); // +1 for /0
+  copy[length+1] = NULL;
+
+  // Copy over buffer
+  memcpy(copy, buf, length);
 
   /* We can get away with this since the buffer is 2 times
    * bigger than what we are putting there.
    */
-  len = strlen(str);
-  if (len < 2) {
-    free(str);
-    return NULL;
-  }
-  ptr = str;
-  for (i=0; i<len; i+=2) {
-    *ptr = x2c((unsigned char *)&str[i]);
+  ptr = copy;
+  for (i=0; i<length; i+=2) {
+    *ptr = x2c((unsigned char *)&copy[i]);
     ptr++;
   }
   *ptr = 0;
-  return str;
+  return copy;
 }
 
-static const char *print_sockaddr(const char *val)
+static const char *print_sockaddr(char *msg, int length)
 {
   int slen;
   const struct sockaddr *saddr;
   char name[NI_MAXHOST], serv[NI_MAXSERV];
   const char *host;
-  char *out = NULL;
-  const char *str;
+  const char *str; // used for Family name.
 
-  slen = strlen(val)/2;
-  host = parse_unescape((char *)val);
+  char *out = NULL;
+
+  // Need to parse out the HEX portion of the SOCKADDR
+  char *delim = strchr(msg, '=');
+  char *val = delim + 1; // Skip the = sign
+  
+  // Value length = Position of the message end - start pos of the value
+  int vallength = ((unsigned int) msg + length) - ((unsigned int) delim + 1);
+
+  audit_msg(LOG_NOTICE, "%s LENGTH: %d\n", val, vallength);
+
+  slen = vallength/2;
+ 
+  host = parse_unescape(val, vallength);
+ /*
   if (host == NULL) {
     asprintf(&out, "malformed host(%s)", val);
     return out;
   }
+  
   saddr = (struct sockaddr *)host;
 
   // Now print address for some families
   switch (saddr->sa_family) {
     case AF_LOCAL:
       {
+        str = "AF_LOCAL";
         const struct sockaddr_un *un =
           (struct sockaddr_un *)saddr;
         if (un->sun_path[0])
@@ -171,6 +175,7 @@ static const char *print_sockaddr(const char *val)
       }
       break;
     case AF_INET:
+      str = "AF_INET";
       if (slen < sizeof(struct sockaddr_in)) {
         asprintf(&out, "%s sockaddr len too short",
             str);
@@ -189,6 +194,7 @@ static const char *print_sockaddr(const char *val)
       break;
     case AF_IPX:
       {
+        str = "AF_IPX";
         const struct sockaddr_ipx *ip =
           (struct sockaddr_ipx *)saddr;
         asprintf(&out, "%s port:%d net:%u", str,
@@ -197,6 +203,7 @@ static const char *print_sockaddr(const char *val)
       break;
     case AF_ATMPVC:
       {
+        str = "AF_ATMPVC";
         const struct sockaddr_atmpvc* at =
           (struct sockaddr_atmpvc *)saddr;
         asprintf(&out, "%s int:%d", str, 
@@ -204,6 +211,7 @@ static const char *print_sockaddr(const char *val)
       }
       break;
     case AF_INET6:
+      str = "AF_INET6";
       if (slen < sizeof(struct sockaddr_in6)) {
         asprintf(&out, "%s sockaddr6 len too short", 
             str);
@@ -222,6 +230,7 @@ static const char *print_sockaddr(const char *val)
       break;
     case AF_NETLINK:
       {
+        str = "AF_NETLINK";
         const struct sockaddr_nl *n =
           (struct sockaddr_nl *)saddr;
         asprintf(&out, "%s pid:%u", str, n->nl_pid);
@@ -233,7 +242,7 @@ static const char *print_sockaddr(const char *val)
         asprintf(&out, "unknown family(%d)", saddr->sa_family);
         break;
       }
-  }
+  } */
   free((char *)host);
   return out;
 }
@@ -257,12 +266,7 @@ const char *interpret_reply(char *msg, int length, int reply_type) {
   switch(reply_type) {
     case AUDIT_SOCKADDR:
       {
-        char *addrmsg;
-        asprintf(&addrmsg, "type=%s %.*s AUDIT_SOCKADDR\n",
-            audit_msg_type_to_name(reply_type),
-            length,
-            msg);
-        return addrmsg;
+        print_sockaddr(msg, length);
       }
     default:
       {
