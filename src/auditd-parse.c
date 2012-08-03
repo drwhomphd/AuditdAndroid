@@ -147,7 +147,7 @@ static const char *print_sockaddr(char *msg, int length)
   char *val = delim + 1; // Skip the = sign
   
   // Value length = Position of the message end - start pos of the value
-  int vallength = ((unsigned int) msg + length) - ((unsigned int) delim + 1);
+  int vallength = (msg + length) - (delim + 1);
 
   slen = vallength/2;
  
