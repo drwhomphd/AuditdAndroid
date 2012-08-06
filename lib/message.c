@@ -27,14 +27,14 @@
 #include "private.h"
 #include <android/log.h> // Android logging
 
+#define MSG_WARN ANDROID_LOG_WARN
+#define MSG_ERROR ANDROID_LOG_ERROR
+#define MSG_INFO ANDROID_LOG_INFO
+
 /* The message mode refers to where informational messages go
    0 - stderr, 1 - syslog, 2 - quiet. The default is quiet. */
 static message_t message_mode = MSG_QUIET;
 static debug_message_t debug_message = DBG_NO;
-
-
-// Log priority for Android specific logging functionality
-static android_LogPriority log_priority = ANDROID_LOG_WARN;
 
 //extern int __android_log_vprint(int prio, const char *tag, const char *fmt, va_list ap);
 
@@ -44,30 +44,22 @@ void set_aumessage_mode(message_t mode, debug_message_t debug)
 	debug_message = debug;
 }
 
-void audit_msg(int priority, const char *fmt, ...)
+/**
+ * Print a message to Android's logcat. Message type can be of
+ * MSG_WARN, MSG_ERROR, or MSG_INFO. These are aliases for their
+ * ANDROID_LOG equivalents.
+ */
+void audit_msg(int message_type, const char *fmt, ...)
 {
         va_list   ap;
 
-	//if (message_mode == MSG_QUIET)
-	//	return;
-
-        if (log_priority == ANDROID_LOG_SILENT)
+        if (message_type == ANDROID_LOG_SILENT)
           return;
 
-//	if (priority == LOG_DEBUG && debug_message == DBG_NO)
-//		return;
-
         va_start(ap, fmt);
-        if (message_mode == MSG_SYSLOG)
-                vsyslog(priority, fmt, ap);
-        else {
-                vfprintf(stderr, fmt, ap);
-		fputc('\n', stderr);
-	}
 
-        if (log_priority != ANDROID_LOG_SILENT) {
-          __android_log_vprint(log_priority, "auditd", fmt, ap);
-        }
+        __android_log_vprint(message_type, "auditd", fmt, ap);
+
         va_end( ap );
 }
 hidden_def(audit_msg)

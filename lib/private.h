@@ -48,7 +48,7 @@ extern "C" {
 typedef enum { REAL_ERR, HIDE_IT } hide_t;
 
 /* Internal syslog messaging */
-void audit_msg(int priority, const char *fmt, ...) 
+void audit_msg(int message_type, const char *fmt, ...) 
 #ifdef __GNUC__
 	__attribute__ ((format (printf, 2, 3)));
 #else
