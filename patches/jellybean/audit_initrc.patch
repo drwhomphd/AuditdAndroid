@@ -1,0 +1,24 @@
+diff --git a/rootdir/init.rc b/rootdir/init.rc
+index bb7e4ea..71eb1b9 100644
+--- a/rootdir/init.rc
++++ b/rootdir/init.rc
+@@ -363,6 +363,11 @@ service adbd /sbin/adbd
+ on property:ro.kernel.qemu=1
+     start adbd
+ 
++# init does not like either the fork() or pipe() call made by auditd during daemonization with forks. The -n stops these calls from being made and failing.
++service auditd /system/bin/auditd -n
++    class core
++    socket audit stream 0660 audit audit
++
+ service servicemanager /system/bin/servicemanager
+     class core
+     user system
+@@ -373,6 +378,7 @@ service servicemanager /system/bin/servicemanager
+     onrestart restart surfaceflinger
+     onrestart restart drm
+ 
++
+ service vold /system/bin/vold
+     class core
+     socket vold stream 0660 root mount
