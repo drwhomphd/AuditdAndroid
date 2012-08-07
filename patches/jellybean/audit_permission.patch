@@ -1,3 +1,37 @@
+diff --git a/core/res/AndroidManifest.xml b/core/res/AndroidManifest.xml
+index 6546fed..37a3b0d 100644
+--- a/core/res/AndroidManifest.xml
++++ b/core/res/AndroidManifest.xml
+@@ -777,6 +777,13 @@
+         android:label="@string/permlab_removeTasks"
+         android:description="@string/permdesc_removeTasks" />
+ 
++    <!-- Allows an application to access the raw Audit stream -->
++    <permission android:name="android.permission.AUDIT"
++      android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
++      android:protectionLevel="dangerous"
++      android:label="@string/permlab_audit"
++      android:description="@string/permdesc_audit" />
++
+     <!-- Allows an application to start any activity, regardless of permission
+          protection or exported state. @hide -->
+     <permission android:name="android.permission.START_ANY_ACTIVITY"
+diff --git a/core/res/res/values/strings.xml b/core/res/res/values/strings.xml
+index 325b6fe..510ee16 100755
+--- a/core/res/res/values/strings.xml
++++ b/core/res/res/values/strings.xml
+@@ -563,6 +563,11 @@
+         tasks and kill their apps. Malicious apps may disrupt
+         the behavior of other apps.</string>
+ 
++    <!-- Title of an application permission, allowing an application to access the system's audit stream -->
++    <string name="permlab_audit">access audit stream</string>
++    <!-- Description of an application permission, allowwwing an application to access the system's audit stream -->
++    <string name="permdesc_audit">Allows the app to access the system audit stream. This stream could leak sensitive data from other applications running on the system.</string>
++
+     <!-- Title of an application permission, allowing an application to start any activity, regardless of permission protection or exported state. -->
+     <string name="permlab_startAnyActivity">start any activity</string>
+     <!-- Description of an application permission, allowing an application to start any activity, regardless of permission protection or exported state. -->
 diff --git a/data/etc/platform.xml b/data/etc/platform.xml
 index 4b93e74..d2490b1 100644
 --- a/data/etc/platform.xml
