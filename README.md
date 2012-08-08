@@ -7,7 +7,7 @@ Our goal is to port a minimal set of userland tools from the GNU/Linux userland 
 1. A rooted Android system.
 2. Running the 2.6.29 kernel with CONFIG_AUDITSYSCALL=y
   * We needed to copy over the audit.h kernel header because Google uses clean headers. Their utilities to clean headers are unusable by those not blessed with the power of Google (i.e., the documentation is minimal and the ixd is horrible). More details in the directory structure section.
-3. The Google NDK or the AOSP source code (Tested on 4.0.3 and 4.1.1)
+3. The Google NDK (API Level 10) or the AOSP source code (Tested on 4.0.3 and 4.1.1)
 
 ## Compiling ##
 
@@ -16,6 +16,8 @@ From inside this directory run the following command:
 ndk-build NDK_APPLICATION_MK=./Application.mk NDK_PROJECT_PATH=./
 
 The obj and libs directory will contain the final output.
+
+Currently the NDK's build script targets Android's API level 10 (Gingerbread). Anything before this doesn't work.
 
 ### AOSP ###
 Copy this directory in to the <AndroidBuildRoot>/external directory. No need
@@ -42,7 +44,7 @@ The 'prebuilt' directory contains precompiled binaries used for this program. As
 
 The 'scripts' directory contains helper scripts that can be used to aid testing the code, installing code on the system, and building vm tarballs. They're more utility glue than polished products.
 
-The 'patches' directory contains patches that enable certain advanced functionalities in the AOSP build. For example, it would enable the creation of an AUDIT permission that could be used by userland applications.
+The 'patches' directory contains patches that enable certain advanced functionalities in the AOSP build. For example, it would enable the creation of an AUDIT permission that could be used by userland applications. Any patches that modify AOSP are in a folder specific to the Android release they target. Kernel patches to specific Android device kernels are included in the top level directory.
 
 ## Modifications of the original Audit configuration ##
 
