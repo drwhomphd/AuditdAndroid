@@ -7,7 +7,7 @@ MY_ROOT_PATH := external/android_audit
 ETC_DIR := $(TARGET_OUT)/etc/audit
 
 LOCAL_MODULE := auditctl
-LOCAL_MODULE_TAGS := debug
+LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES:= lib/libaudit.c \
 			lib/message.c \
 			lib/netlink.c \
@@ -36,7 +36,7 @@ include $(CLEAR_VARS)
 MY_ROOT_PATH := external/android_audit
 
 LOCAL_MODULE := auditd
-LOCAL_MODULE_TAGS := debug
+LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES:= lib/libaudit.c \
 			lib/message.c \
 			lib/netlink.c \
@@ -68,7 +68,7 @@ include $(BUILD_EXECUTABLE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := spade-audit
-LOCAL_MODULE_TAGS := eng
+LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES:= src/spadeLinuxAudit.c
 LOCAL_CFLAGS :=  -fPIE -DPIE -g -D_GNU_SOURCE -fno-strict-aliasing 
 LOCAL_LDLIBS := -lm -lpthread -lc
@@ -78,7 +78,7 @@ include $(BUILD_EXECUTABLE)
 # Start copying configuration files
 include $(CLEAR_VARS)
 LOCAL_MODULE := auditd.conf
-LOCAL_MODULE_TAGS := eng
+LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH := $(ETC_DIR)
 LOCAL_SRC_FILES := etc/auditd.conf
