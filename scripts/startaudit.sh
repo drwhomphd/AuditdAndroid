@@ -10,7 +10,10 @@
 #          considerably faster.
 
 # Start auditd
-adb shell auditd
+# Commented out because the distributed emulator starts auditd
+# During the init process. If you are not using the modified
+# Android OS, uncomment this line.
+# adb shell auditd
 
 # Start the spade-audit dump running in the background
 adb shell spade-audit > ./dumpforspade.log &
@@ -46,6 +49,8 @@ adb shell auditctl -l
 
 # Add our other rules
 adb shell auditctl -a exit,always -S clone -S execve -S exit_group -S open -S write -S mkdir -S mkdirat -S mknod -S chmod -S fchmod -S fchmodat -S chown -S fchown32 -S fchownat -S lchown32 -S close -S fork -S unlink -S link -S setuid -S symlink -S unlinkat -S setuid32 -S setreuid32 -S setresuid32
+
+# adb shell auditctl -a exit,always -S 102
 
 # Start up logcat so we can monitor any warnings auditd sends
 adb logcat
