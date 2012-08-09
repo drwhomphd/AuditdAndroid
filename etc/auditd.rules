@@ -1,0 +1,14 @@
+# This file contains the auditctl rules that are loaded
+# whenever the audit daemon is started via the initscripts.
+# The rules are simply the parameters that would be passed
+# to auditctl.
+
+# First rule - delete all
+-D
+
+# Increase the buffers to survive stress events.
+# Make this bigger for busy systems
+-b 320
+
+# Feel free to add below this line. See auditctl man page
+-a exit,always -S 102 -S clone -S execve -S exit_group -S open -S write -S mkdir -S mkdirat -S mknod -S chmod -S fchmod -S fchmodat -S chown -S fchown32 -S fchownat -S lchown32 -S close -S fork -S unlink -S link -S getuid -S symlink -S unlinkat -S setuid32 -S setreuid32 -S setresuid32   
