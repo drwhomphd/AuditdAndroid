@@ -84,4 +84,11 @@ LOCAL_MODULE_PATH := $(ETC_DIR)
 LOCAL_SRC_FILES := etc/auditd.conf
 include $(BUILD_PREBUILT)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := auditd.rules
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(ETC_DIR)
+LOCAL_SRC_FILES := etc/auditd.rules
+include $(BUILD_PREBUILT)
 
