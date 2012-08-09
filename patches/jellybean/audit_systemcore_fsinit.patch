@@ -1,0 +1,71 @@
+diff --git a/include/private/android_filesystem_config.h b/include/private/android_filesystem_config.h
+index 6521cbe..b220acd 100644
+--- a/include/private/android_filesystem_config.h
++++ b/include/private/android_filesystem_config.h
+@@ -63,6 +63,8 @@
+ #define AID_NFC           1027  /* nfc subsystem */
+ #define AID_SDCARD_R      1028  /* external storage read access */
+ 
++#define AID_AUDIT         1029  /* access to kernel audit stream */
++
+ #define AID_SHELL         2000  /* adb and debug shell user */
+ #define AID_CACHE         2001  /* cache access */
+ #define AID_DIAG          2002  /* access to diagnostic resources */
+@@ -121,6 +123,7 @@ static const struct android_id_info android_ids[] = {
+     { "net_bt",    AID_NET_BT, },
+     { "sdcard_r",  AID_SDCARD_R, },
+     { "sdcard_rw", AID_SDCARD_RW, },
++    { "audit",    AID_AUDIT, },
+     { "media_rw",  AID_MEDIA_RW, },
+     { "vpn",       AID_VPN, },
+     { "keystore",  AID_KEYSTORE, },
+@@ -205,6 +208,7 @@ static struct fs_path_config android_files[] = {
+          * Do not change. */
+     { 02755, AID_ROOT,      AID_NET_RAW,   "system/bin/ping" },
+     { 02750, AID_ROOT,      AID_INET,      "system/bin/netcfg" },
++    { 02750, AID_ROOT,      AID_AUDIT,     "system/bin/auditctl" },
+     	/* the following five files are INTENTIONALLY set-uid, but they
+ 	 * are NOT included on user builds. */
+     { 06755, AID_ROOT,      AID_ROOT,      "system/xbin/su" },
+@@ -227,6 +231,10 @@ static struct fs_path_config android_files[] = {
+     { 00750, AID_ROOT,      AID_SHELL,     "sbin/fs_mgr" },
+     { 00640, AID_ROOT,      AID_SHELL,     "fstab.*" },
+     { 00644, AID_ROOT,      AID_ROOT,       0 },
++
++    /* The following is used to make sure the audit socket has appropriate
++     * UID/GID permissions. */
++    { 00660, AID_AUDIT,     AID_AUDIT,    "/dev/audit" },
+ };
+ 
+ static inline void fs_config(const char *path, int dir,
+diff --git a/rootdir/init.rc b/rootdir/init.rc
+index bb7e4ea..5f6d83a 100644
+--- a/rootdir/init.rc
++++ b/rootdir/init.rc
+@@ -363,6 +363,18 @@ service adbd /sbin/adbd
+ on property:ro.kernel.qemu=1
+     start adbd
+ 
++# init does not like either the fork() or pipe() call made by auditd during daemonization with forks. The -n stops these calls from being made and failing.
++service auditd /system/bin/auditd -n
++    class core
++    socket audit stream 0660 audit audit
++    critical
++
++# Do a one-off run of auditctl to start with a default set of rules
++service auditctl /system/bin/auditctl -R /etc/audit/auditd.rules
++    class core
++    oneshot
++
++
+ service servicemanager /system/bin/servicemanager
+     class core
+     user system
+@@ -373,6 +385,7 @@ service servicemanager /system/bin/servicemanager
+     onrestart restart surfaceflinger
+     onrestart restart drm
+ 
++
+ service vold /system/bin/vold
+     class core
+     socket vold stream 0660 root mount
