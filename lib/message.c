@@ -1,5 +1,6 @@
 /* message.c --
  * Copyright 2004, 2005 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012 Nathaniel Husted
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +19,7 @@
  *
  * Authors:
  *      Steve Grubb <sgrubb@redhat.com>
+ *      Nathaniel Husted <nhusted@gmail.com>
  */
 
 #include "config.h"
