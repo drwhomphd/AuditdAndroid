@@ -1,6 +1,7 @@
 /*
- * interpret.c - Lookup values to something more readable
+ * auditd-parse.c - Lookup values to something more readable
  * Copyright (c) 2007-09,2011-12 Red Hat Inc., Durham, North Carolina.
+ * Copyright (c) 2012 Nathaniel Husted
  * All Rights Reserved. 
  *
  * This software may be freely redistributed and/or modified under the
@@ -19,6 +20,7 @@
  *
  * Authors:
  *   Steve Grubb <sgrubb@redhat.com>
+ *   Nathaniel Husted <nhusted@gmail.com>
  */
 
 #include "config.h"

@@ -1,5 +1,6 @@
 /* auditd-config.h -- 
  * Copyright 2004-2007 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012 Nathaniel Husted
  * All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,6 +19,7 @@
  *
  * Authors:
  *   DJ Delorie <dj@redhat.com>
+ *   Nathaniel Husted <nhusted@gmail.com>
  * 
  */
 

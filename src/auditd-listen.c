@@ -1,6 +1,7 @@
 /* auditd-listen.c -- 
  * Copyright 2008,2009,2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
+ * Copyright 2012 Nathaniel Husted
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +19,7 @@
  *
  * Authors:
  *   DJ Delorie <dj@redhat.com>
+ *   Nathaniel Husted <nhusted@gmail.com>
  * 
  */
 

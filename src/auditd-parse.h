@@ -1,5 +1,6 @@
-/* interpret.h --
+/* auditd-parse.h --
  * Copyright 2007,08 Red Hat Inc., Durham, North Carolina.
+ * COpyright 2012 Nathaniel Husted
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +19,7 @@
  *
  * Authors:
  *      Steve Grubb <sgrubb@redhat.com>
+ *      Nathaniel Husted <nhusted@gmail.com>
  */
 
 #ifndef INTERPRET_HEADER
