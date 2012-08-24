@@ -45,8 +45,8 @@
 #include <linux/atm.h>
 #include <linux/if.h>   // FIXME: remove when ipx.h is fixed
 #include <linux/ipx.h>
-#include <linux/capability.h>
-#include <sys/personality.h>
+//#include <linux/capability.h>
+//#include <sys/personality.h>
 #include <netinet/in.h>
 
 #include "gen_tables.h"
