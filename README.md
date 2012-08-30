@@ -5,8 +5,8 @@ Our goal is to port a minimal set of userland tools from the GNU/Linux userland 
 
 ## Requirements ##
 1. A rooted Android system.
-2. Running the 2.6.29 or higher X86 kernel with CONFIG_AUDITSYSCALL=y
-  * For the ARM platform, the kernel must be patched.
+2. Running the 2.6.29 or higher x86 kernel with CONFIG_AUDITSYSCALL=y
+  * For the ARM platform, the kernel must be patched (See section "Custom Kernel").
   * We needed to copy over the audit.h kernel header because Google uses clean headers. Their utilities to clean headers are unusable by those not blessed with the power of Google (i.e., the documentation is minimal and the ixd is horrible). More details in the directory structure section.
 3. The Google NDK (API Level 10) or the AOSP source code (Tested on 4.0.3 and 4.1.1)
 
@@ -14,11 +14,19 @@ Our goal is to port a minimal set of userland tools from the GNU/Linux userland 
 
 ### NDK ###
 From inside this directory run the following command: 
-ndk-build NDK_APPLICATION_MK=./Application.mk NDK_PROJECT_PATH=./
+
+`ndk-build NDK_APPLICATION_MK=./Application.mk NDK_PROJECT_PATH=./`
 
 The obj and libs directory will contain the final output.
 
 Currently the NDK's build script targets Android's API level 10 (Gingerbread). Anything before this doesn't work.
+
+The binaries can be tried in an emulator or similarly on a device by following steps:
+
+* In a new directory copy system.img, userdata.img and ramdisk.img from your platform's system images; copy startvm.sh from scripts directory and copy a custom kernel (See section "Custom kernel").
+* The system's init.rc needs to be patched according to the patch audit_systemcore_fsinit.patch in patches directory. To update init.rc, you need to unpack ramdisk.img, edit the file and repack. See [Modifying .IMG FILES](http://omappedia.org/wiki/Android_eMMC_Booting#Modifying_.IMG_Files) for further assistance.
+* The compiled binaries need to be placed in /system/bin and files in AuditAndroid's etc directory need to be placed in /system/etc/audit/. Since the /system directory is mapped in system.img you can place files by unpacking and re-packing sytem.img using [unyaffs](http://code.google.com/p/unyaffs/), [remounting or sim2img](http://omappedia.org/wiki/Android_eMMC_Booting#Modifying_.IMG_Files).
+* Run the startvm.sh script to run the emulator.
 
 ### AOSP ###
 Copy this directory in to the <AndroidBuildRoot>/external directory. Compile Android normally. Then, within your compilation terminal type 'mmm external/<This project's Directory>' to compile in the audit subsystem. Finally, type 'make snod' to rebuild your system image. 
@@ -29,7 +37,6 @@ If you are building for a physical device, you will need to build a custom kerne
 You must have a kernel running with CONFIG_AUDIT=y and CONFIG_AUDITSYSCALL=y in the configuration. Instructions on building a kernel for Android can be found at source.android.com and various other sources on the Internet. We include patches for the goldfish ARM platform and the maguro ARM platform to enable systemcall auditing. These patches are included in the 'patches' directory.
 
 ### Patching AOSP ###
-We provide a set of patches for AOSP's 4.1.1_r1 branch under the 'patches/jellybean' directory. These patches enable auditd to start on boot and enable the android.permission.AUDIT so that audit can be controlled from the userland. Currently there is a plan to write a script to perform this patching for the user. Right now, each patch refers to a specific git project under the AOSP source tree. Patching is left as an exercise to the user at this time but here is a helpful guide: http://jungels.net/articles/diff-patch-ten-minutes.html.
 
 ## Directory Structure ##
 
