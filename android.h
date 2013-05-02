@@ -31,6 +31,8 @@
 #define fgets_unlocked(x,y,z) fgets(x,y,z)
 
 #define _POSIX_HOST_NAME_MAX 255
-#define O_DSYNC O_SYNC
+
+// This needs to be commented out for Android 4.2.1+
+//#define O_DSYNC O_SYNC
 
 typedef long fd_mask;
