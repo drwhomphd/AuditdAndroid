@@ -21,7 +21,7 @@ The obj and libs directory will contain the final output.
 Currently the NDK's build script targets Android's API level 10 (Gingerbread). Anything before this doesn't work.
 
 ### AOSP ###
-Copy this directory in to the <AndroidBuildRoot>/external directory. Compile Android normally. Then, within your compilation terminal type 'mmm external/<This project's Directory>' to compile in the audit subsystem. Finally, type 'make snod' to rebuild your system image. 
+Copy this directory in to the <AndroidBuildRoot>/external directory. Compile Android normally. Then, within your compilation terminal type 'mmm external/<This project's Directory>' to compile in the audit subsystem. Finally, type 'make snod' to rebuild your system image.
 
 If you are building for a physical device, you will need to build a custom kernel before building AOSP. For instructions on building custom kernels, please refer to the AOSP Documentation here: http://source.android.com/source/building-kernels.html. 
 
@@ -30,6 +30,8 @@ You must have a kernel running with CONFIG_AUDIT=y and CONFIG_AUDITSYSCALL=y in 
 
 ### Patching AOSP ###
 We provide a set of patches for AOSP's 4.1.1_r1 branch under the 'patches/jellybean' directory. These patches enable auditd to start on boot and enable the android.permission.AUDIT so that audit can be controlled from the userland. Currently there is a plan to write a script to perform this patching for the user. Right now, each patch refers to a specific git project under the AOSP source tree. Patching is left as an exercise to the user at this time but here is a helpful guide: http://jungels.net/articles/diff-patch-ten-minutes.html.
+
+If you use these patches you will also have to run "make update-api" in order to make the modified Framework API.
 
 ## Directory Structure ##
 
