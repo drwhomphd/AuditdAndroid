@@ -1,0 +1,71 @@
+diff --git a/include/private/android_filesystem_config.h b/include/private/android_filesystem_config.h
+index 7e34da8..3295500 100644
+--- a/include/private/android_filesystem_config.h
++++ b/include/private/android_filesystem_config.h
+@@ -62,6 +62,7 @@
+ #define AID_DRMRPC        1026  /* group for drm rpc */
+ #define AID_NFC           1027  /* nfc subsystem */
+ #define AID_SDCARD_R      1028  /* external storage read access */
++#define AID_AUDIT         1029  /* access to kernel audit stream */
+ 
+ #define AID_SHELL         2000  /* adb and debug shell user */
+ #define AID_CACHE         2001  /* cache access */
+@@ -126,6 +127,7 @@ static const struct android_id_info android_ids[] = {
+     { "net_bt_stack",    AID_NET_BT_STACK, },
+     { "sdcard_r",  AID_SDCARD_R, },
+     { "sdcard_rw", AID_SDCARD_RW, },
++    { "audit",    AID_AUDIT, },
+     { "media_rw",  AID_MEDIA_RW, },
+     { "vpn",       AID_VPN, },
+     { "keystore",  AID_KEYSTORE, },
+@@ -186,6 +188,7 @@ static struct fs_path_config android_dirs[] = {
+ ** and will allow partial matches.
+ */
+ static struct fs_path_config android_files[] = {
++    { 00660, AID_ROOT,      AID_AUDIT,     "system/etc/audit/auditd.rules" },
+     { 00440, AID_ROOT,      AID_SHELL,     "system/etc/init.goldfish.rc" },
+     { 00550, AID_ROOT,      AID_SHELL,     "system/etc/init.goldfish.sh" },
+     { 00440, AID_ROOT,      AID_SHELL,     "system/etc/init.trout.rc" },
+@@ -212,6 +215,7 @@ static struct fs_path_config android_files[] = {
+     { 06755, AID_ROOT,      AID_ROOT,      "system/xbin/procmem" },
+     { 06755, AID_ROOT,      AID_ROOT,      "system/xbin/tcpdump" },
+     { 04770, AID_ROOT,      AID_RADIO,     "system/bin/pppd-ril" },
++    { 04750, AID_ROOT,      AID_AUDIT,     "system/bin/auditctl" },
+ 		/* the following file is INTENTIONALLY set-uid, and IS included
+ 		 * in user builds. */
+     { 06750, AID_ROOT,      AID_SHELL,     "system/bin/run-as" },
+@@ -226,6 +230,9 @@ static struct fs_path_config android_files[] = {
+     { 00750, AID_ROOT,      AID_SHELL,     "sbin/fs_mgr" },
+     { 00640, AID_ROOT,      AID_SHELL,     "fstab.*" },
+     { 00644, AID_ROOT,      AID_ROOT,       0 },
++    /* The following is used to make sure the audit socket has appropriate
++     * UID/GID permissions. */
++    { 00660, AID_AUDIT,     AID_AUDIT,    "/dev/audit" },
+ };
+ 
+ static inline void fs_config(const char *path, int dir,
+diff --git a/rootdir/init.rc b/rootdir/init.rc
+index caef358..d4c69ab 100644
+--- a/rootdir/init.rc
++++ b/rootdir/init.rc
+@@ -403,6 +403,20 @@ service adbd /sbin/adbd
+ on property:ro.kernel.qemu=1
+     start adbd
+ 
++# init does not like either the fork() or pipe() call made by auditd during daemonization with forks. 
++# Then stops these calls from being made and failing.
++service auditd /system/bin/auditd -n
++    class core
++    socket audit stream 0660 audit audit
++    critical
++
++# Do a one-off run of auditctl to start with a default set of rules
++service auditctl /system/bin/auditctl -R /etc/audit/auditd.rules
++    class core
++    oneshot
++
++
++
+ service servicemanager /system/bin/servicemanager
+     class core
+     user system
